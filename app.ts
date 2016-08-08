@@ -39,6 +39,11 @@ Seat 5: falco_lucky7 folded before Flop (didn't bet)
 Seat 6: reppinR1 folded on the River
 `;
 
+interface Card {
+  suit: string;
+  value: number
+}
+
 interface Stakes {
   sb: number,
   bb: number
@@ -46,8 +51,14 @@ interface Stakes {
 
 interface Hero {
   name: string;
-  hand: string[];
+  hand: Card[];
   position: string;
+}
+
+interface Board {
+  flop: Card[],
+  turn: Card,
+  river: Card
 }
 
 class HandHistory {
@@ -86,7 +97,7 @@ class HandHistory {
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
     let regEx = /\(([^\/]+)\/([^\)]+)\)/
-    let result = runRegex(regEx);
+    let result = this.runRegex(regEx);
 
     let step1 = result[0].split(' ');
     let step2 = step1[0].split('/');
@@ -99,15 +110,11 @@ class HandHistory {
     let yr, mth, day, h, m, s;
     let regEx = 
       /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/
-    let result = runRegex(regEx);
-
-    
+    let result = this.runRegex(regEx);
 
     Array.prototype.shift.call(result);
 
     [yr, mth, day, h, m, s] = result
-    debugger
-
     this._time = Date.UTC(yr, mth, day, h, m, s)
   }
 
@@ -122,10 +129,42 @@ class HandHistory {
 
     let heroAndCards = 
       /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
-    let result = runRegex(heroAndCards)
+    let result = this.runRegex(heroAndCards)
 
     this._hero.name = result[1]
-    this._hero.hand = [ result[2], result[3], result[4], result[5]]
+    this._hero.hand = [ 
+      this.convertToCard(result[2]), 
+      this.convertToCard(result[3]), 
+      this.convertToCard(result[4]), 
+      this.convertToCard(result[5])
+      ]
+  }
+
+  private convertToCard(card: string): Card {
+    let value;
+    switch (card[0]) {
+      case 'T' : 
+        value = 10;
+        break;
+      case 'J' : 
+        value = 11;
+        break;
+      case 'Q' : 
+        value = 12;
+        break;
+      case 'K' : 
+        value = 13;
+        break;
+      case 'A' : 
+        value = 14;
+        break;
+      default: value = parseInt(card[0])
+    }
+      
+    return {
+      suit: card[1],
+      value: value
+    }
   }
 
   private runRegex(regExString) {
@@ -145,8 +184,9 @@ function benchmark (func, times = 10000 ) {
 
 // benchmark( () => { new HandHistory(hh) } )
 
+debugger
 let hhobj = new HandHistory(hh);
-console.log(hhobj.time)
+// console.log(hhobj.time)
 
 
 let stakes = '/\(([^\/]+)\/([^\)]+)\)/';
@@ -155,15 +195,4 @@ let heroAndCards =
   /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
 let board  = 
   /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/
-
-function escapeRegExp(string){
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-}
-
-function  runRegex(regExString) {
-    let regExp = new RegExp(regExString)
-    return hh.match(regExp)
-  }
-
-// console.log(  runRegex(board) )
 
