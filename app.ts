@@ -55,7 +55,7 @@ class HandHistory {
   private _hh: string;
 
   // meta
-  private _time:  string;
+  private _time:  number;
   private _stakes: Stakes;
 
   // hero 
@@ -73,10 +73,42 @@ class HandHistory {
 
   get board() { return  this._board}
   get hero() { return  this._hero}
+  get time() { return  this._time}
+  get stakes() { return  this._stakes}
 
   private parseHH(hh) {
     this.setBoard()
-    this.setHero ()
+    this.setHero()
+    this.setStakes();
+    this.setTime();
+  }
+
+  private setStakes() {
+    this._stakes = { sb: 0, bb: 0 }
+    let regEx = /\(([^\/]+)\/([^\)]+)\)/
+    let result = runRegex(regEx);
+
+    let step1 = result[0].split(' ');
+    let step2 = step1[0].split('/');
+
+    this._stakes.sb = parseFloat(step2[0].substr(2));
+    this._stakes.bb = parseFloat(step2[1].substr(1));
+  }
+
+  private setTime () {
+    let yr, mth, day, h, m, s;
+    let regEx = 
+      /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/
+    let result = runRegex(regEx);
+
+    
+
+    Array.prototype.shift.call(result);
+
+    [yr, mth, day, h, m, s] = result
+    debugger
+
+    this._time = Date.UTC(yr, mth, day, h, m, s)
   }
 
   private setBoard() {
@@ -86,7 +118,7 @@ class HandHistory {
   }
 
   private setHero () {
-    this._hero = {hand: [], position: '', name: ''}
+    this._hero = { hand: [], position: '', name: '' }
 
     let heroAndCards = 
       /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
@@ -95,23 +127,26 @@ class HandHistory {
     this._hero.name = result[1]
     this._hero.hand = [ result[2], result[3], result[4], result[5]]
   }
+
   private runRegex(regExString) {
     let regExp = new RegExp(regExString)
     return this._hh.match(regExp)
   }
 }
 
-
 function benchmark (func, times = 10000 ) {
   let t1 = Date.now() / 1000
-  for (let i = 0; i< times; i++ ) {
+  for (let i = 0; i < times; i++) {
     func();
   }
   let t2 = Date.now() / 1000
   console.log(t2-t1)
 }
 
-benchmark( () => { new HandHistory(hh) }, 200)
+// benchmark( () => { new HandHistory(hh) } )
+
+let hhobj = new HandHistory(hh);
+console.log(hhobj.time)
 
 
 let stakes = '/\(([^\/]+)\/([^\)]+)\)/';

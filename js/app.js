@@ -45,9 +45,31 @@ class HandHistory {
     }
     get board() { return this._board; }
     get hero() { return this._hero; }
+    get time() { return this._time; }
+    get stakes() { return this._stakes; }
     parseHH(hh) {
         this.setBoard();
         this.setHero();
+        this.setStakes();
+        this.setTime();
+    }
+    setStakes() {
+        this._stakes = { sb: 0, bb: 0 };
+        let regEx = /\(([^\/]+)\/([^\)]+)\)/;
+        let result = runRegex(regEx);
+        let step1 = result[0].split(' ');
+        let step2 = step1[0].split('/');
+        this._stakes.sb = parseFloat(step2[0].substr(2));
+        this._stakes.bb = parseFloat(step2[1].substr(1));
+    }
+    setTime() {
+        let yr, mth, day, h, m, s;
+        let regEx = /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/;
+        let result = runRegex(regEx);
+        Array.prototype.shift.call(result);
+        [yr, mth, day, h, m, s] = result;
+        debugger;
+        this._time = Date.UTC(yr, mth, day, h, m, s);
     }
     setBoard() {
         let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
@@ -73,7 +95,9 @@ function benchmark(func, times = 10000) {
     let t2 = Date.now() / 1000;
     console.log(t2 - t1);
 }
-benchmark(() => { new HandHistory(hh); }, 200);
+// benchmark( () => { new HandHistory(hh) } )
+let hhobj = new HandHistory(hh);
+console.log(hhobj.time);
 let stakes = '/\(([^\/]+)\/([^\)]+)\)/';
 let stakess = /\(([^\/]+)\/([^\)]+)\)/;
 let heroAndCards = /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
@@ -86,3 +110,4 @@ function runRegex(regExString) {
     return hh.match(regExp);
 }
 // console.log(  runRegex(board) )
+//# sourceMappingURL=app.js.map
