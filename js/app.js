@@ -31,7 +31,7 @@ Yoo4 collected $54.50 from pot
 Yoo4: doesn't show hand 
 *** SUMMARY ***
 Total pot $57 | Rake $2.50 
-Board [Jd Tc 2c]
+Board [Js Tc 2c 4s 5s]
 Seat 1: charlybumbum (button) folded before Flop (didn't bet)
 Seat 2: zocker jo433 (small blind) folded on the Flop
 Seat 3: Yoo4 (big blind) collected ($54.50)
@@ -40,6 +40,8 @@ Seat 6: reppinR1 folded on the River
 `;
 class HandHistory {
     constructor(hh) {
+        this._board = {};
+        this._preflopHand = false;
         this._hh = hh;
         this.parseHH(hh);
     }
@@ -52,6 +54,7 @@ class HandHistory {
         this.setHero();
         this.setStakes();
         this.setTime();
+        this.setBoard();
     }
     setStakes() {
         this._stakes = { sb: 0, bb: 0 };
@@ -72,7 +75,24 @@ class HandHistory {
     }
     setBoard() {
         let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
-        // this._board = runRegex(regEx)
+        let result = this.runRegex(regEx);
+        if (result) {
+            Array.prototype.shift.call(result);
+            this._board.flop = [
+                this.convertToCard(result[0]),
+                this.convertToCard(result[1]),
+                this.convertToCard(result[2])
+            ];
+            if (result[3]) {
+                this._board.turn = this.convertToCard(result[3]);
+                if (result[4]) {
+                    this._board.river = this.convertToCard(result[4]);
+                }
+            }
+        }
+        else {
+            this._preflopHand = true;
+        }
     }
     setHero() {
         this._hero = { hand: [], position: '', name: '' };
@@ -124,12 +144,8 @@ function benchmark(func, times = 10000) {
     let t2 = Date.now() / 1000;
     console.log(t2 - t1);
 }
-// benchmark( () => { new HandHistory(hh) } )
-debugger;
+benchmark(() => { new HandHistory(hh); });
 let hhobj = new HandHistory(hh);
+debugger;
 // console.log(hhobj.time)
-let stakes = '/\(([^\/]+)\/([^\)]+)\)/';
-let stakess = /\(([^\/]+)\/([^\)]+)\)/;
-let heroAndCards = /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
-let board = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
 //# sourceMappingURL=app.js.map
