@@ -44,6 +44,12 @@ interface Stakes {
   bb: number
 }
 
+interface Hero {
+  name: string;
+  hand: string[];
+  position: string;
+}
+
 class HandHistory {
 
   private _hh: string;
@@ -53,9 +59,7 @@ class HandHistory {
   private _stakes: Stakes;
 
   // hero 
-  private _hero: string;
-  private _hand: string;
-  private _position: string;
+  private _hero: Hero;
 
   // action
   private _numOfPlayers: number;
@@ -67,17 +71,48 @@ class HandHistory {
     this.parseHH(hh);
   }
 
-  parseHH(hh) {
+  get board() { return  this._board}
+  get hero() { return  this._hero}
 
+  private parseHH(hh) {
+    this.setBoard()
+    this.setHero ()
   }
 
+  private setBoard() {
+    let regEx  = 
+      /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/
+    // this._board = runRegex(regEx)
+  }
 
-  runRegex(regExString) {
+  private setHero () {
+    this._hero = {hand: [], position: '', name: ''}
+
+    let heroAndCards = 
+      /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
+    let result = runRegex(heroAndCards)
+
+    this._hero.name = result[1]
+    this._hero.hand = [ result[2], result[3], result[4], result[5]]
+  }
+  private runRegex(regExString) {
     let regExp = new RegExp(regExString)
     return this._hh.match(regExp)
   }
-
 }
+
+
+function benchmark (func, times = 10000 ) {
+  let t1 = Date.now() / 1000
+  for (let i = 0; i< times; i++ ) {
+    func();
+  }
+  let t2 = Date.now() / 1000
+  console.log(t2-t1)
+}
+
+benchmark( () => { new HandHistory(hh) }, 200)
+
 
 let stakes = '/\(([^\/]+)\/([^\)]+)\)/';
 let stakess = /\(([^\/]+)\/([^\)]+)\)/
@@ -92,8 +127,8 @@ function escapeRegExp(string){
 
 function  runRegex(regExString) {
     let regExp = new RegExp(regExString)
-    return this._hh.match(regExp)
+    return hh.match(regExp)
   }
 
-console.log(  runRegex(board) )
+// console.log(  runRegex(board) )
 
