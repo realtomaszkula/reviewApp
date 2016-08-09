@@ -139,7 +139,6 @@ export class HandHistory {
 
   private setHeroPosition () {
     this._hero = this._hero || { name : '', position: '', hand: [] }
-    debugger
     let regEx = /Seat #(\d) is the button/;
     let buttonPosition = parseInt(this.runRegex(regEx)[1])
 

@@ -38,3 +38,46 @@ Seat 3: Yoo4 (big blind) collected ($54.50)
 Seat 5: falco_lucky7 folded before Flop (didn't bet)
 Seat 6: reppinR1 folded on the River
 `;
+
+let two = `PokerStars Hand #156829378394:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/03 23:47:15 CET [2016/08/03 17:47:15 ET]
+Table 'Semphyra' 6-max Seat #4 is the button
+Seat 1: chusooo2 ($221.76 in chips) 
+Seat 2: alepato77 ($100 in chips) 
+Seat 3: reppinR1 ($102.95 in chips) 
+Seat 4: xAndorx ($135 in chips) 
+Seat 5: hosic666 ($100 in chips) 
+Seat 6: Riicky_Bobby ($97.49 in chips) 
+hosic666: posts small blind $0.50
+Riicky_Bobby: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [7d Kc 4c 6d]
+chusooo2: folds 
+alepato77: folds 
+reppinR1: raises $2.50 to $3.50
+xAndorx: folds 
+hosic666: folds 
+Riicky_Bobby: raises $7.50 to $11
+reppinR1: calls $7.50
+*** FLOP *** [Ac Td Kd]
+Riicky_Bobby: bets $12
+reppinR1: calls $12
+*** TURN *** [Ac Td Kd] [Qc]
+Riicky_Bobby: checks 
+reppinR1: bets $44.18
+Riicky_Bobby: calls $44.18
+*** RIVER *** [Ac Td Kd Qc] [7h]
+Riicky_Bobby: checks 
+reppinR1: checks 
+*** SHOW DOWN ***
+Riicky_Bobby: shows [Tc 5c Kh 9c] (two pair, Kings and Tens)
+reppinR1: mucks hand 
+Riicky_Bobby collected $132.36 from pot
+*** SUMMARY ***
+Total pot $134.86 | Rake $2.50 
+Board [Ac Td Kd Qc 7h]
+Seat 1: chusooo2 folded before Flop (didn't bet)
+Seat 2: alepato77 folded before Flop (didn't bet)
+Seat 3: reppinR1 mucked [7d Kc 4c 6d]
+Seat 4: xAndorx (button) folded before Flop (didn't bet)
+Seat 5: hosic666 (small blind) folded before Flop
+Seat 6: Riicky_Bobby (big blind) showed [Tc 5c Kh 9c] and won ($132.36) with two pair, Kings and Tens`
