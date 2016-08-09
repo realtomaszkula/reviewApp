@@ -155,7 +155,6 @@ define(["require", "exports", '../scripts/app'], function (require, exports, app
                 });
                 it('should create correct sb ', () => {
                     expect(hh.stakes.sb).toEqual(1);
-                    console.log(hh.stakes.bb);
                 });
                 it('should create correct bb', () => {
                     expect(hh.stakes.bb).toEqual(2);
@@ -168,7 +167,6 @@ define(["require", "exports", '../scripts/app'], function (require, exports, app
                 });
                 it('should create correct sb ', () => {
                     expect(hh.stakes.sb).toEqual(2);
-                    console.log(hh.stakes.bb);
                 });
                 it('should create correct bb', () => {
                     expect(hh.stakes.bb).toEqual(4);
@@ -181,10 +179,34 @@ define(["require", "exports", '../scripts/app'], function (require, exports, app
                 });
                 it('should create correct sb ', () => {
                     expect(hh.stakes.sb).toEqual(3);
-                    console.log(hh.stakes.bb);
                 });
                 it('should create correct bb', () => {
                     expect(hh.stakes.bb).toEqual(6);
+                });
+            });
+        });
+        describe('setHeroName', () => {
+            let hh;
+            describe('when setting hero name', () => {
+                it('should capture names with alphanumeric characters', () => {
+                    let hhraw = `Dealt to reppinR1 [Js 8c]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true });
+                    expect(hh.hero.name).toEqual('reppinR1');
+                });
+                it('should capture names with spaces', () => {
+                    let hhraw = `Dealt to Donald J Trump [As 4c]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true });
+                    expect(hh.hero.name).toEqual('Donald J Trump');
+                });
+                it('should capture names with squarebarkets characters', () => {
+                    let hhraw = `Dealt to Donald J [As] [As 4c]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true });
+                    expect(hh.hero.name).toEqual('Donald J [As]');
+                });
+                it('should capture names with special characters', () => {
+                    let hhraw = `Dealt to *&^%$@#A SD<>?:"{} [As 4c]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true });
+                    expect(hh.hero.name).toEqual('*&^%$@#A SD<>?:"{}');
                 });
             });
         });

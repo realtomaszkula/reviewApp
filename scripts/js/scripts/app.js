@@ -10,8 +10,8 @@ define(["require", "exports"], function (require, exports) {
         parseHH(opts) {
             if (opts.setBoard)
                 this.setBoard();
-            if (opts.setHero)
-                this.setHero();
+            if (opts.setHeroName)
+                this.setHeroName();
             if (opts.setStakes)
                 this.setStakes();
             if (opts.setTime)
@@ -59,16 +59,22 @@ define(["require", "exports"], function (require, exports) {
                 this._preflopHand = true;
             }
         }
-        setHero() {
-            this._hero = { hand: [], position: '', name: '' };
-            let heroAndCards = /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
-            let result = this.runRegex(heroAndCards);
-            this._hero.name = result[1];
+        setHeroName() {
+            this._hero = this._hero || { name: '', position: '', hand: [] };
+            debugger;
+            let regEx = /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
+            let result = this.runRegex(regEx);
+            this._hero.name = result[1].trim();
+        }
+        setHeroCards() {
+            this._hero || {};
+            let regEx = / /;
+            let result = this.runRegex(regEx);
             this._hero.hand = [
+                this.convertToCard(result[1]),
                 this.convertToCard(result[2]),
                 this.convertToCard(result[3]),
-                this.convertToCard(result[4]),
-                this.convertToCard(result[5])
+                this.convertToCard(result[4])
             ];
         }
         convertToCard(card) {

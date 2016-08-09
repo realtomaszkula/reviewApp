@@ -45,7 +45,7 @@ export class HandHistory {
 
   private parseHH(opts) {
     if (opts.setBoard) this.setBoard()
-    if (opts.setHero) this.setHero()
+    if (opts.setHeroName) this.setHeroName()
     if (opts.setStakes) this.setStakes();
     if (opts.setTime) this.setTime()
   }
@@ -79,44 +79,53 @@ export class HandHistory {
     this._time = Date.UTC(yr, mth, day, h, m, s)
   }
 
-    setBoard() {
-        let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
-        let result = this.runRegex(regEx);
-        if (result) {
-            Array.prototype.shift.call(result);
-            this._board.flop = [
-              this.convertToCard(result[0]),
-              this.convertToCard(result[1]),
-              this.convertToCard(result[2])
-            ]
-            if (result[3]) {
-                this._board.turn = this.convertToCard(result[3]);
-                if (result[4]) {
-                    this._board.river = this.convertToCard(result[4]);
-                }
-            }
-        }
-        
-        else {
-            this._preflopHand = true;
-        }
+  setBoard() {
+      let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
+      let result = this.runRegex(regEx);
+      if (result) {
+          Array.prototype.shift.call(result);
+          this._board.flop = [
+            this.convertToCard(result[0]),
+            this.convertToCard(result[1]),
+            this.convertToCard(result[2])
+          ]
+          if (result[3]) {
+              this._board.turn = this.convertToCard(result[3]);
+              if (result[4]) {
+                  this._board.river = this.convertToCard(result[4]);
+              }
+          }
+      }
+      
+      else {
+          this._preflopHand = true;
+      }
 
-    }
+  }
 
-  private setHero () {
-    this._hero = { hand: [], position: '', name: '' }
+  private setHeroName () {
+    this._hero = this._hero || { name : '', position: '', hand: [] }
+        debugger
 
-    let heroAndCards = 
-      /Dealt to (\w+) \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])/;
-    let result = this.runRegex(heroAndCards)
+    let regEx = 
+      /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
+    let result = this.runRegex(regEx)
+    this._hero.name = result[1].trim();
 
-    this._hero.name = result[1]
-    this._hero.hand = [ 
-      this.convertToCard(result[2]), 
-      this.convertToCard(result[3]), 
-      this.convertToCard(result[4]), 
-      this.convertToCard(result[5])
-      ]
+  }
+
+  private setHeroCards() {
+      this._hero || {}
+
+      let regEx = 
+        / /;
+      let result = this.runRegex(regEx)
+        this._hero.hand = [ 
+        this.convertToCard(result[1]), 
+        this.convertToCard(result[2]), 
+        this.convertToCard(result[3]), 
+        this.convertToCard(result[4])
+        ]
   }
 
   private convertToCard(card: string): Card {
