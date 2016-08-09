@@ -11,7 +11,7 @@ interface Stakes {
 interface Hero {
   name: string;
   hand: Card[];
-  position: string;
+  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB' | '' ;
 }
 
 interface Board {
@@ -50,6 +50,7 @@ export class HandHistory {
     if (opts.setTime) this.setTime();
     if (opts.setHeroName) this.setHeroName();
     if (opts.setHeroCards) this.setHeroCards();
+    if (opts.setHeroPosition) this.setHeroPosition();
 
   }
 
@@ -115,7 +116,6 @@ export class HandHistory {
     this._hero.name = result[1].trim();
 
   }
-
   private setHeroCards() {
     this._hero = this._hero || { name : '', position: '', hand: [] }
     let regEx = 
@@ -128,8 +128,6 @@ export class HandHistory {
           this.convertToCard(result[1]), 
         ]
         
-                  debugger
-
         if (result[2] && result[3]) {
           this._gameType = "Omaha";
           this._hero.hand.push(this.convertToCard(result[2]));
@@ -137,6 +135,14 @@ export class HandHistory {
         } else {
           this._gameType = "Holdem";
         }
+  }
+
+  private setHeroPosition () {
+    this._hero = this._hero || { name : '', position: '', hand: [] }
+    debugger
+    let regEx = /Seat #(\d) is the button/;
+    let buttonPosition = parseInt(this.runRegex(regEx)[1])
+
   }
 
   private convertToCard(card: string): Card {

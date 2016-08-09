@@ -18,6 +18,8 @@ define(["require", "exports"], function (require, exports) {
                 this.setHeroName();
             if (opts.setHeroCards)
                 this.setHeroCards();
+            if (opts.setHeroPosition)
+                this.setHeroPosition();
         }
         get board() { return this._board; }
         get hero() { return this._hero; }
@@ -77,7 +79,6 @@ define(["require", "exports"], function (require, exports) {
                 this.convertToCard(result[0]),
                 this.convertToCard(result[1]),
             ];
-            debugger;
             if (result[2] && result[3]) {
                 this._gameType = "Omaha";
                 this._hero.hand.push(this.convertToCard(result[2]));
@@ -86,6 +87,12 @@ define(["require", "exports"], function (require, exports) {
             else {
                 this._gameType = "Holdem";
             }
+        }
+        setHeroPosition() {
+            this._hero = this._hero || { name: '', position: '', hand: [] };
+            debugger;
+            let regEx = /Seat #(\d) is the button/;
+            let buttonPosition = parseInt(this.runRegex(regEx)[1]);
         }
         convertToCard(card) {
             let value;

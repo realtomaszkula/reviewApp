@@ -346,13 +346,34 @@ describe('Hand History', () => {
         it('should set correct suit for second card', () => {
           expect(hh.hero.hand[3].suit).toEqual('c');
         });
-
       })
 
+    });
+  });
 
-
+  describe('setPosition', () => {
+    describe('on 6 max table with 6 players', () => {
+      it('should recognize BTN position', () => {
+          let hhraw = `Table 'Aletheia' 6-max Seat #1 is the button
+          Seat 1: reppinR1 ($116.08 in chips)
+          Seat 2: zocker jo433 ($416.52 in chips) 
+          Seat 3: Yoo4 ($347.17 in chips) 
+          Seat 4: Zecik11 ($322.14 in chips) 
+          Seat 5: falco_lucky7 ($108.80 in chips) 
+          Seat 6: charlybumbum ($100 in chips)
+`
+          let hh = new app.HandHistory(hhraw, { setHeroPosition: true });
+          expect(hh.hero.position).toEqual('BTN')
+      })
     });
   });
 });
 
 
+`Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: charlybumbum ($100 in chips) 
+Seat 2: zocker jo433 ($416.52 in chips) 
+Seat 3: Yoo4 ($347.17 in chips) 
+Seat 4: Zecik11 ($322.14 in chips) 
+Seat 5: falco_lucky7 ($108.80 in chips) 
+Seat 6: reppinR1 ($116.08 in chips) `
