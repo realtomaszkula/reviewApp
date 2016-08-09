@@ -257,19 +257,99 @@ describe('Hand History', () => {
 
   describe('setHeroCards', () => {
 
-    let hh;
     describe('when setting hero cards', () => {
-      it('should set game type as holdem when dealt two cards', () => {
-        let hhraw = `Dealt to reppinR1 [Js 8c]`;
-        hh = new app.HandHistory(hhraw, { setHeroName: true, setHeroCards: true });
-        expect(hh.gameType).toEqual('Holdem');
-      });
 
-      it('should set game type as omaha when dealt four cards', () => {
-        let hhraw = `Dealt to reppinR1 [Js 8c As Ks]`;
-        hh = new app.HandHistory(hhraw, { setHeroName: true, setHeroCards: true });
-        expect(hh.gameType).toEqual('Omaha');
-      });
+      describe('when dealt two cards', () => {
+      let hh;
+
+        beforeEach(() => {
+          let hhraw = `Dealt to reppinR1 [Js 8c]`;
+          hh = new app.HandHistory(hhraw, { setHeroCards: true });
+        });
+
+        it('should set game type as holdem', () => {
+          expect(hh.gameType).toEqual('Holdem');
+        });
+
+        it('should define two cards', () => {
+          expect(hh.hero.hand[0]).toBeDefined();
+          expect(hh.hero.hand[1]).toBeDefined();
+          expect(hh.hero.hand[2]).not.toBeDefined();
+          expect(hh.hero.hand[3]).not.toBeDefined();
+        });
+
+
+        it('should set correct value for first card', () => {
+          expect(hh.hero.hand[0].value).toEqual(11);
+        });
+
+        it('should set correct suit for first card', () => {
+          expect(hh.hero.hand[0].suit).toEqual('s');
+        });
+
+        it('should set correct value for second card', () => {
+          expect(hh.hero.hand[1].value).toEqual(8);
+        });
+
+        it('should set correct suit for second card', () => {
+          expect(hh.hero.hand[1].suit).toEqual('c');
+        });
+      })
+
+      describe('when dealt four cards', () => {
+      let hh;
+
+        beforeEach(() => {
+          let hhraw = `Dealt to reppinR1 [As Kd Qh 4c]`;
+          hh = new app.HandHistory(hhraw, { setHeroCards: true });
+        });
+
+        it('should set game type as omaha', () => {
+          expect(hh.gameType).toEqual('Omaha');
+        });
+
+        it('should define two cards', () => {
+          expect(hh.hero.hand[0]).toBeDefined();
+          expect(hh.hero.hand[1]).toBeDefined();
+          expect(hh.hero.hand[2]).toBeDefined();
+          expect(hh.hero.hand[3]).toBeDefined();
+        });
+
+        it('should set correct value for first card', () => {
+          expect(hh.hero.hand[0].value).toEqual(14);
+        });
+
+        it('should set correct suit for first card', () => {
+          expect(hh.hero.hand[0].suit).toEqual('s');
+        });
+
+        it('should set correct value for second card', () => {
+          expect(hh.hero.hand[1].value).toEqual(13);
+        });
+
+        it('should set correct suit for second card', () => {
+          expect(hh.hero.hand[1].suit).toEqual('d');
+        });
+
+        it('should set correct value for first card', () => {
+          expect(hh.hero.hand[2].value).toEqual(12);
+        });
+
+        it('should set correct suit for first card', () => {
+          expect(hh.hero.hand[2].suit).toEqual('h');
+        });
+
+        it('should set correct value for second card', () => {
+          expect(hh.hero.hand[3].value).toEqual(4);
+        });
+
+        it('should set correct suit for second card', () => {
+          expect(hh.hero.hand[3].suit).toEqual('c');
+        });
+
+      })
+
+
 
     });
   });

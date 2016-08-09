@@ -70,13 +70,14 @@ define(["require", "exports"], function (require, exports) {
         }
         setHeroCards() {
             this._hero = this._hero || { name: '', position: '', hand: [] };
-            let regEx = /reppinR1 [[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
+            let regEx = /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
             let regExResult = this.runRegex(regEx)[1];
             let result = regExResult.split(' ');
             this._hero.hand = [
                 this.convertToCard(result[0]),
                 this.convertToCard(result[1]),
             ];
+            debugger;
             if (result[2] && result[3]) {
                 this._gameType = "Omaha";
                 this._hero.hand.push(this.convertToCard(result[2]));
