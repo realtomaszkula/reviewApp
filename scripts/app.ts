@@ -85,9 +85,9 @@ export class HandHistory {
         if (result) {
             Array.prototype.shift.call(result);
             this._board.flop = [
-                    this.convertToCard(result[0]),
-                    this.convertToCard(result[1]),
-                    this.convertToCard(result[2])
+              this.convertToCard(result[0]),
+              this.convertToCard(result[1]),
+              this.convertToCard(result[2])
             ]
             if (result[3]) {
                 this._board.turn = this.convertToCard(result[3]);
@@ -100,6 +100,7 @@ export class HandHistory {
         else {
             this._preflopHand = true;
         }
+
     }
 
   private setHero () {

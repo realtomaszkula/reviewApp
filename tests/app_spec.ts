@@ -1,3 +1,6 @@
+/// <reference path="../scripts/app" />
+
+
 import app = require('../scripts/app')
 import exampleHH = require('../scripts/handhistories/handhistories') 
 
@@ -22,40 +25,40 @@ describe('Hand History', () => {
           expect(hh.board.flop.length).toEqual(3);
         })
         it('should create correct card value for first element', () {
-          expect(hh.board.flop[0]).toEqual('J');
+          expect(hh.board.flop[0].value).toEqual(11);
         })
         it('should create correct card value for second element', () {
-          expect(hh.board.flop[0]).toEqual('T');
+          expect(hh.board.flop[1].value).toEqual(10);
         })
         it('should create correct card value for third element', () {
-          expect(hh.board.flop[1]).toEqual('2');
+          expect(hh.board.flop[2].value).toEqual(2);
         })
         it('should create correct card suit for first element', () {
-          expect(hh.board.flop[1]).toEqual('s');
+          expect(hh.board.flop[0].suit).toEqual('s');
         })
         it('should create correct card suit for second element', () {
-          expect(hh.board.flop[2]).toEqual('c');
+          expect(hh.board.flop[1].suit).toEqual('c');
         })
         it('should create correct card suit for third element', () {
-          expect(hh.board.flop[2]).toEqual('d');
+          expect(hh.board.flop[2].suit).toEqual('d');
         });
       });
 
       describe('when creating turn', () => {
         it('should create correct card value', () {
-          expect(hh.board.turn).toEqual('4');
+          expect(hh.board.turn.value).toEqual(4);
         });
         it('should create correct card suit ', () {
-          expect(hh.board.turn).toEqual('s');
+          expect(hh.board.turn.suit).toEqual('s');
         });
       });
 
       describe('when creating river', () => {
         it('should create correct card value', () {
-          expect(hh.board.turn).toEqual('5');
+          expect(hh.board.river.value).toEqual(5);
         });
         it('should create correct card suit ', () {
-          expect(hh.board.turn).toEqual('s');
+          expect(hh.board.river.suit).toEqual('s');
         });
       });
     });
@@ -63,7 +66,7 @@ describe('Hand History', () => {
     describe('with four cards specified', () => {
       let hh;
       beforeEach(() => {
-        let hhraw = `Total pot $57 | Rake $2.50 Board [Ad, Ks, 4s, 4d] Seat 1:`;
+        let hhraw = `Total pot $57 | Rake $2.50 Board [Ad Ks 4s 4d] Seat 1:`;
         hh = new app.HandHistory(hhraw, { setBoard: true });
       });
 
@@ -77,7 +80,7 @@ describe('Hand History', () => {
     describe('with three cards specified', () => {
       let hh;
       beforeEach(() => {
-        let hhraw = `Total pot $57 | Rake $2.50 Board [Ad, Ks, 4s, 4d] Seat 1:`;
+        let hhraw = `Total pot $57 | Rake $2.50 Board [Ad Ks 4s] Seat 1:`;
         hh = new app.HandHistory(hhraw, { setBoard: true });
       });
 
@@ -87,5 +90,142 @@ describe('Hand History', () => {
         expect(hh.board.river).not.toBeDefined();
       });
     });
+  });
+
+  describe('setStakes', () => {
+    let hh;
+
+    it ('should create stakes object with correct properties', () => {
+      let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01`;
+      hh = new app.HandHistory(hhraw, { setStakes: true });
+      expect(hh.stakes).toBeDefined
+      expect(hh.stakes.sb).toBeDefined();
+      expect(hh.stakes.bb).toBeDefined();
+    })
+
+    describe('for $0.02/$0.05', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.02/$0.05 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(0.02)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(0.05)
+      })
+    });
+
+    describe('for $0.05/$0.10', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.05/$0.10 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(0.05)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(0.1)
+      })
+    });
+
+
+    describe('for $0.1/$0.25', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.10/$0.25 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(0.10)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(0.25)
+      })
+    });
+
+    describe('for $0.25/$0.50', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.25/$0.50 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(0.25)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(0.50)
+      })
+    });
+
+    describe('for $0.5/$1.0', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(0.5)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(1)
+      })
+    });
+
+    describe('for $1/$2', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($1/$2 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(1)
+        console.log(hh.stakes.bb)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(2)
+      })
+    });
+
+    describe('for $2/$4', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($2/$4 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(2)
+        console.log(hh.stakes.bb)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(4)
+      })
+    });
+
+    describe('for $3/$6', () => {
+      beforeEach(() => {
+        let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($3/$6 USD) - 2016/08/01`;
+       hh = new app.HandHistory(hhraw, { setStakes: true });
+      })
+
+      it ('should create correct sb ', () => {
+        expect(hh.stakes.sb).toEqual(3)
+        console.log(hh.stakes.bb)
+      })
+
+      it ('should create correct bb', () => {
+        expect(hh.stakes.bb).toEqual(6)
+      })
+    });
+
   });
 });
