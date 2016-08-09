@@ -1,8 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "js",
+    "outDir": "scripts/js",
     "watch": true,
     "target": "es6",
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "module": "amd"
+  },
+  "files": [
+    "typings/index.d.ts",
+    "tests/app_spec.ts",
+    "scripts/app.ts"
+  ]
 }

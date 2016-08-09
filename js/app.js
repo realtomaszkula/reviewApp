@@ -1,3 +1,4 @@
+"use strict";
 let hh = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:25:01 CET [2016/07/31 18:25:01 ET]
 Table 'Aletheia' 6-max Seat #1 is the button
 Seat 1: charlybumbum ($100 in chips) 
@@ -136,6 +137,8 @@ class HandHistory {
         return this._hh.match(regExp);
     }
 }
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = HandHistory;
 function benchmark(func, times = 10000) {
     let t1 = Date.now() / 1000;
     for (let i = 0; i < times; i++) {

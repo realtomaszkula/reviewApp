@@ -61,7 +61,7 @@ interface Board {
   river?: Card
 }
 
-class HandHistory {
+export class HandHistory {
 
   private _hh: string;
 
@@ -200,10 +200,3 @@ function benchmark (func, times = 10000 ) {
   let t2 = Date.now() / 1000
   console.log(t2-t1)
 }
-
-benchmark( () => { new HandHistory(hh) } )
-
-let hhobj = new HandHistory(hh);
-debugger
-// console.log(hhobj.time)
-
