@@ -10,17 +10,20 @@ define(["require", "exports"], function (require, exports) {
         parseHH(opts) {
             if (opts.setBoard)
                 this.setBoard();
-            if (opts.setHeroName)
-                this.setHeroName();
             if (opts.setStakes)
                 this.setStakes();
             if (opts.setTime)
                 this.setTime();
+            if (opts.setHeroName)
+                this.setHeroName();
+            if (opts.setHeroCards)
+                this.setHeroCards();
         }
         get board() { return this._board; }
         get hero() { return this._hero; }
         get time() { return this._time; }
         get stakes() { return this._stakes; }
+        get gameType() { return this._gameType; }
         setStakes() {
             this._stakes = { sb: 0, bb: 0 };
             let regEx = /\(([^\/]+)\/([^\)]+)\)/;
@@ -61,21 +64,27 @@ define(["require", "exports"], function (require, exports) {
         }
         setHeroName() {
             this._hero = this._hero || { name: '', position: '', hand: [] };
-            debugger;
             let regEx = /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
             let result = this.runRegex(regEx);
             this._hero.name = result[1].trim();
         }
         setHeroCards() {
-            this._hero || {};
-            let regEx = / /;
-            let result = this.runRegex(regEx);
+            this._hero = this._hero || { name: '', position: '', hand: [] };
+            let regEx = /reppinR1 [[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
+            let regExResult = this.runRegex(regEx)[1];
+            let result = regExResult.split(' ');
             this._hero.hand = [
+                this.convertToCard(result[0]),
                 this.convertToCard(result[1]),
-                this.convertToCard(result[2]),
-                this.convertToCard(result[3]),
-                this.convertToCard(result[4])
             ];
+            if (result[2] && result[3]) {
+                this._gameType = "Omaha";
+                this._hero.hand.push(this.convertToCard(result[2]));
+                this._hero.hand.push(this.convertToCard(result[3]));
+            }
+            else {
+                this._gameType = "Holdem";
+            }
         }
         convertToCard(card) {
             let value;

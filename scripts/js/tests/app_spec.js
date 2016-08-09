@@ -210,6 +210,21 @@ define(["require", "exports", '../scripts/app'], function (require, exports, app
                 });
             });
         });
+        describe('setHeroCards', () => {
+            let hh;
+            describe('when setting hero cards', () => {
+                it('should set game type as holdem when dealt two cards', () => {
+                    let hhraw = `Dealt to reppinR1 [Js 8c]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true, setHeroCards: true });
+                    expect(hh.gameType).toEqual('Holdem');
+                });
+                it('should set game type as omaha when dealt four cards', () => {
+                    let hhraw = `Dealt to reppinR1 [Js 8c As Ks]`;
+                    hh = new app.HandHistory(hhraw, { setHeroName: true, setHeroCards: true });
+                    expect(hh.gameType).toEqual('Omaha');
+                });
+            });
+        });
     });
 });
 //# sourceMappingURL=app_spec.js.map
