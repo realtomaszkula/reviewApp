@@ -21,43 +21,43 @@ describe('Hand History', () => {
       });
 
       describe('when creating flop', () => {
-        it('should have 3 elements', () {
+        it('should have 3 elements', () => {
           expect(hh.board.flop.length).toEqual(3);
         })
-        it('should create correct card value for first element', () {
+        it('should create correct card value for first element', () => {
           expect(hh.board.flop[0].value).toEqual(11);
         })
-        it('should create correct card value for second element', () {
+        it('should create correct card value for second element', () => {
           expect(hh.board.flop[1].value).toEqual(10);
         })
-        it('should create correct card value for third element', () {
+        it('should create correct card value for third element', () => {
           expect(hh.board.flop[2].value).toEqual(2);
         })
-        it('should create correct card suit for first element', () {
+        it('should create correct card suit for first element', () => {
           expect(hh.board.flop[0].suit).toEqual('s');
         })
-        it('should create correct card suit for second element', () {
+        it('should create correct card suit for second element', () => {
           expect(hh.board.flop[1].suit).toEqual('c');
         })
-        it('should create correct card suit for third element', () {
+        it('should create correct card suit for third element', () => {
           expect(hh.board.flop[2].suit).toEqual('d');
         });
       });
 
       describe('when creating turn', () => {
-        it('should create correct card value', () {
+        it('should create correct card value', () => {
           expect(hh.board.turn.value).toEqual(4);
         });
-        it('should create correct card suit ', () {
+        it('should create correct card suit ', () => {
           expect(hh.board.turn.suit).toEqual('s');
         });
       });
 
       describe('when creating river', () => {
-        it('should create correct card value', () {
+        it('should create correct card value', () => {
           expect(hh.board.river.value).toEqual(5);
         });
-        it('should create correct card suit ', () {
+        it('should create correct card suit ', () => {
           expect(hh.board.river.suit).toEqual('s');
         });
       });
