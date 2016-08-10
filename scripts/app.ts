@@ -20,7 +20,7 @@ interface Board {
   river?: Card
 }
 
-
+// 
 export default class HandHistory {
 
   private _hh: string;
