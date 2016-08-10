@@ -6,7 +6,7 @@ import exampleHH = require('../scripts/handhistories/handhistories')
 
 describe('Hand History', () => {
 
-  describe('when creating 10 000 elements', () => {
+  xdescribe('when creating 10 000 elements', () => {
     it('should finish in less than 5s', () => {
         let hhRaw= `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:25:01 CET [2016/07/31 18:25:01 ET]
 Table 'Aletheia' 6-max Seat #1 is the button
