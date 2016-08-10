@@ -21,7 +21,7 @@ interface Board {
 }
 
 
-export class HandHistory {
+export default class HandHistory {
 
   private _hh: string;
 

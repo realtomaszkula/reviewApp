@@ -1,0 +1,11 @@
+{
+  "name": "finer-review",
+  "description": "description",
+  "author": "zzz1",
+  "version": "1.0.0",
+  "main": "scripts/js/app.js",
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
+}

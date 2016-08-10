@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
     "outDir": "scripts/js",
     "watch": true,
     "target": "es6",
-    "sourceMap": true,
-    "module": "amd"
+    "sourceMap": true
   },
   "files": [
     "typings/index.d.ts",
-    "tests/app_spec.ts",
+    "spec/app_spec.ts",
     "scripts/app.ts"
   ]
 }
