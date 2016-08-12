@@ -11,13 +11,23 @@ interface Stakes {
 interface Hero {
   name: string;
   hand: Card[];
-  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB' | '' ;
+  position: Position ;
 }
 
 interface Board {
   flop?: Card[],
   turn?: Card,
   river?: Card
+}
+
+interface Position {
+  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB' | ""
+}
+
+interface TableComposition {
+  _buttonSeat:  Position ;
+  _heroSeat:  Position ;
+  _numberOfPlayersSeated: number;
 }
 
 // 
@@ -34,10 +44,12 @@ export default class HandHistory {
   private _hero: Hero;
 
   // action
-  private _numOfPlayersSeated: number;
   private _potSize: number;
   private _board: Board = {};
   private _lastStreetPlayed: 'preflop' | 'flop' | 'turn' | 'river';
+
+  // table composition
+  private _tableComposition: TableComposition;
 
   constructor(hh:string, opts = {}) {
     this._hh = hh;
@@ -53,6 +65,7 @@ export default class HandHistory {
     if (opts.setHeroName) this.setHeroName();
     if (opts.setHeroCards) this.setHeroCards();
     if (opts.setHeroPosition) this.setHeroPosition();
+    if (opts.setTableComposition) this.setTableComposition();
 
   }
 
@@ -63,6 +76,16 @@ export default class HandHistory {
   get gameType() { return  this._gameType}
   get lastStreetPlayed() { return  this._lastStreetPlayed }
   get potSize() { return  this._potSize }
+  get tableComposition() { return  this._tableComposition }
+
+
+  private findButtonSeat():Position {
+    return { position: 'UTG'}
+  }
+
+  private setTableComposition () {
+
+  }
 
   private setPot() {
     let regEx = 
@@ -124,7 +147,7 @@ export default class HandHistory {
   }
 
   private setHeroName () {
-    this._hero = this._hero || { name : '', position: '', hand: [] }
+    this._hero = this._hero || { name : '', position: { position: '' }, hand: [] }
     let regEx = 
       /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
     let result = this.runRegex(regEx)
@@ -132,7 +155,7 @@ export default class HandHistory {
 
   }
   private setHeroCards() {
-    this._hero = this._hero || { name : '', position: '', hand: [] }
+    this._hero = this._hero || { name : '', position: { position: '' }, hand: [] }
     let regEx = 
       /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
       let regExResult = this.runRegex(regEx)[1]
@@ -153,7 +176,7 @@ export default class HandHistory {
   }
 
   private setHeroPosition () {
-    this._hero = this._hero || { name : '', position: '', hand: [] }
+    this._hero = this._hero || { name : '', position: { position: '' }, hand: [] }
     let regEx = /Seat #(\d) is the button/;
     let buttonPosition = parseInt(this.runRegex(regEx)[1])
 

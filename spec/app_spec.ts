@@ -1,3 +1,4 @@
+/// <reference path="/home/tomasz/Sites/finerReview/scripts/app.ts" />
 
 import HandHistory from "../scripts/app";
 
@@ -430,13 +431,13 @@ Seat 6: reppinR1 folded on the River`;
     });
   });
 
-  describe('setPotSize', () => {
+  describe('setPot', () => {
     describe('when setting pot size', () => {
       it('should capture decimal numbers', () => {
         let hhraw = `*** SUMMARY ***
         Total pot $10.50 | Rake $0.52 
         Board [7c 9h Ks]`
-        let hh = new HandHistory(hhraw, { setPotSize: true });
+        let hh = new HandHistory(hhraw, { setPot: true });
       
         expect(hh.potSize).toEqual(10.5);
       });
@@ -445,9 +446,41 @@ Seat 6: reppinR1 folded on the River`;
         let hhraw = `*** SUMMARY ***
         Total pot $10 | Rake $0.52 
         Board [7c 9h Ks]`
-        let hh = new HandHistory(hhraw, { setPotSize: true });
+        let hh = new HandHistory(hhraw, { setPot: true });
 
         expect(hh.potSize).toEqual(10);
+      });
+
+    })
+  })
+
+  describe('setTableComposition', () => {
+    describe('when settinging table composition', () => {
+      let hh;
+      beforeEach(() => {
+                let hhraw = `[2016/07/31 18:14:13 ET]
+        Table 'Admete III' 6-max Seat #3 is the button
+        Seat 1: afmaynard ($149.08 in chips) 
+        Seat 2: marquim1980 ($117.77 in chips) 
+        Seat 3: Yoo4 ($100 in chips) 
+        Seat 4: Teiti14 ($27.49 in chips) 
+        Seat 5: reppinR1 ($107.49 in chips) 
+        Seat 6: jasonas1980 ($246.97 in chips) 
+        Teiti14: posts small blind $0.50
+        reppinR1: posts big blind $1`
+        hh = new HandHistory(hhraw, { setTableComposition: true });
+      })
+
+      it('should capture button seat', () => {     
+        expect(hh.tableComposition.btnSeat).toEqual(3);
+      });
+
+      it('should capture hero seat', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual(5);
+      });
+
+      it('should capture numbers of players seated', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual(6);
       });
 
     })
