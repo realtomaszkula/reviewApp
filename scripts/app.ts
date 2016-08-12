@@ -34,7 +34,7 @@ export default class HandHistory {
   private _hero: Hero;
 
   // action
-  private _numOfPlayers: number;
+  private _numOfPlayersSeated: number;
   private _potSize: number;
   private _board: Board = {};
   private _lastStreetPlayed: 'preflop' | 'flop' | 'turn' | 'river';
@@ -45,6 +45,8 @@ export default class HandHistory {
   }
 
   private parseHH(opts) {
+        if (opts.setPot) this.setPot();
+
     if (opts.setBoard) this.setBoard();
     if (opts.setStakes) this.setStakes();
     if (opts.setTime) this.setTime();
@@ -60,6 +62,14 @@ export default class HandHistory {
   get stakes() { return  this._stakes}
   get gameType() { return  this._gameType}
   get lastStreetPlayed() { return  this._lastStreetPlayed }
+  get potSize() { return  this._potSize }
+
+  private setPot() {
+    let regEx = 
+      /Total pot \$((\d+)(\.\d+)?)/
+    let result = this.runRegex(regEx);
+    this._potSize = parseFloat(result[1]);
+  }
 
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
@@ -85,7 +95,7 @@ export default class HandHistory {
     this._time = Date.UTC(yr, mth, day, h, m, s)
   }
 
-  setBoard() {
+  private setBoard() {
       let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
       let result = this.runRegex(regEx);
       if (result) {
@@ -190,3 +200,5 @@ function benchmark (func, times = 10000 ) {
   let t2 = Date.now() / 1000
   console.log(t2-t1)
 }
+
+

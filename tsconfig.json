@@ -9,6 +9,7 @@
   "files": [
     "typings/index.d.ts",
     "spec/app_spec.ts",
-    "scripts/app.ts"
+    "scripts/app.ts",
+    "debug.ts"
   ]
 }

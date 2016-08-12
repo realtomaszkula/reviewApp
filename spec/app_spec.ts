@@ -1,4 +1,3 @@
-/// <reference path="../scripts/app" />
 
 import HandHistory from "../scripts/app";
 
@@ -430,6 +429,29 @@ Seat 6: reppinR1 folded on the River`;
 
     });
   });
+
+  describe('setPotSize', () => {
+    describe('when setting pot size', () => {
+      it('should capture decimal numbers', () => {
+        let hhraw = `*** SUMMARY ***
+        Total pot $10.50 | Rake $0.52 
+        Board [7c 9h Ks]`
+        let hh = new HandHistory(hhraw, { setPotSize: true });
+      
+        expect(hh.potSize).toEqual(10.5);
+      });
+
+      it('should capture round nubers', () => {
+        let hhraw = `*** SUMMARY ***
+        Total pot $10 | Rake $0.52 
+        Board [7c 9h Ks]`
+        let hh = new HandHistory(hhraw, { setPotSize: true });
+
+        expect(hh.potSize).toEqual(10);
+      });
+
+    })
+  })
 
 
 
