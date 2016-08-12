@@ -455,40 +455,121 @@ Seat 6: reppinR1 folded on the River`;
   })
 
   describe('setTableComposition', () => {
-    describe('when settinging table composition', () => {
+    describe('when 6 players seated', () => {
       let hh;
       beforeEach(() => {
                 let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #3 is the button
-        Seat 1: afmaynard ($149.08 in chips) 
+        Table 'Admete III' 6-max Seat #1 is the button
+        Seat 1: Phil ($149.08 in chips) 
         Seat 2: marquim1980 ($117.77 in chips) 
         Seat 3: Yoo4 ($100 in chips) 
         Seat 4: Teiti14 ($27.49 in chips) 
-        Seat 5: reppinR1 ($107.49 in chips) 
-        Seat 6: jasonas1980 ($246.97 in chips) 
+        Seat 5: MiPwnYa ($107.49 in chips) 
+        Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
         hh = new HandHistory(hhraw, { setTableComposition: true });
       })
 
-      it('should capture button seat', () => {     
-        expect(hh.tableComposition.btnSeat).toEqual(3);
-      });
-
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual(5);
+        expect(hh.tableComposition.heroSeat).toEqual('CO');
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual(6);
+        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(6);
+      });
+    })
+
+    describe('when 5 players seated', () => {
+      let hh;
+      beforeEach(() => {
+                let hhraw = `[2016/07/31 18:14:13 ET]
+        Table 'Admete III' 6-max Seat #1 is the button
+        Seat 1: Phil ($149.08 in chips) 
+        Seat 2: marquim1980 ($117.77 in chips) 
+        Seat 3: Yoo4 ($100 in chips) 
+        Seat 4: Teiti14 ($27.49 in chips) 
+        Seat 6: reppinR1 ($246.97 in chips) 
+        Teiti14: posts small blind $0.50
+        reppinR1: posts big blind $1`
+        hh = new HandHistory(hhraw, { setTableComposition: true });
+      })
+
+      it('should capture hero seat', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual('MP');
       });
 
+      it('should capture numbers of players seated', () => {     
+        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(5);
+      });
+    });
+
+    describe('when 4 players seated', () => {
+      let hh;
+      beforeEach(() => {
+                let hhraw = `[2016/07/31 18:14:13 ET]
+        Table 'Admete III' 6-max Seat #1 is the button
+        Seat 1: Phil ($149.08 in chips) 
+        Seat 2: marquim1980 ($117.77 in chips) 
+        Seat 3: Yoo4 ($100 in chips) 
+        Seat 6: reppinR1 ($246.97 in chips) 
+        Teiti14: posts small blind $0.50
+        reppinR1: posts big blind $1`
+        hh = new HandHistory(hhraw, { setTableComposition: true });
+      })
+
+      it('should capture hero seat', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual('UTG');
+      });
+
+      it('should capture numbers of players seated', () => {     
+        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(4);
+      });
     })
-  })
 
+    describe('when 3 players seated', () => {
+      let hh;
+      beforeEach(() => {
+                let hhraw = `[2016/07/31 18:14:13 ET]
+        Table 'Admete III' 6-max Seat #1 is the button
+        Seat 1: Phil ($149.08 in chips) 
+        Seat 2: marquim1980 ($117.77 in chips) 
+        Seat 6: reppinR1 ($246.97 in chips) 
+        Teiti14: posts small blind $0.50
+        reppinR1: posts big blind $1`
+        hh = new HandHistory(hhraw, { setTableComposition: true });
+      })
 
+      it('should capture hero seat', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual('BB');
+      });
 
- 
+      it('should capture numbers of players seated', () => {     
+        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(3);
+      });
+    })
+
+    describe('when 2 players seated', () => {
+      let hh;
+      beforeEach(() => {
+                let hhraw = `[2016/07/31 18:14:13 ET]
+        Table 'Admete III' 6-max Seat #1 is the button
+        Seat 1: Phil ($149.08 in chips) 
+        Seat 6: reppinR1 ($246.97 in chips) 
+        Teiti14: posts small blind $0.50
+        reppinR1: posts big blind $1`
+        hh = new HandHistory(hhraw, { setTableComposition: true });
+      })
+
+      it('should capture hero seat', () => {     
+        expect(hh.tableComposition.heroSeat).toEqual('BB');
+      });
+
+      it('should capture numbers of players seated', () => {     
+        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(3);
+      });
+    })
+
 });
 
 
