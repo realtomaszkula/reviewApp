@@ -79,6 +79,10 @@ Seat 6: reppinR1 folded on the River`;
         expect(hh.board.river).toBeDefined();
       });
 
+      it('should correctly set last street played', () => {
+        expect(hh.lastStreetPlayed).toEqual('river');
+      });
+
       describe('when creating flop', () => {
         it('should have 3 elements', () => {
           expect(hh.board.flop.length).toEqual(3);
@@ -120,6 +124,7 @@ Seat 6: reppinR1 folded on the River`;
           expect(hh.board.river.suit).toEqual('s');
         });
       });
+
     });
 
     describe('with four cards specified', () => {
@@ -133,6 +138,10 @@ Seat 6: reppinR1 folded on the River`;
         expect(hh.board.flop).toBeDefined();
         expect(hh.board.turn).toBeDefined();
         expect(hh.board.river).not.toBeDefined();
+      });
+
+      it('should correctly set last street played', () => {
+        expect(hh.lastStreetPlayed).toEqual('turn');
       });
     });
 
@@ -148,6 +157,18 @@ Seat 6: reppinR1 folded on the River`;
         expect(hh.board.turn).not.toBeDefined();
         expect(hh.board.river).not.toBeDefined();
       });
+
+      it('should correctly set last street played', () => {
+        expect(hh.lastStreetPlayed).toEqual('flop');
+      })
+    });
+
+    describe('without board', () => {
+      it('should correctly set last street played', () => {
+        let hhraw = 'Total pot $2.50 | Rake $0 '
+        let hh = new HandHistory(hhraw, { setBoard: true });
+        expect(hh.lastStreetPlayed).toEqual('preflop');
+      })
     });
   });
 
@@ -410,29 +431,9 @@ Seat 6: reppinR1 folded on the River`;
     });
   });
 
-  describe('setPosition', () => {
-    describe('on 6 max table with 6 players', () => {
-      it('should recognize BTN position', () => {
-          let hhraw = `Table 'Aletheia' 6-max Seat #1 is the button
-          Seat 1: reppinR1 ($116.08 in chips)
-          Seat 2: zocker jo433 ($416.52 in chips) 
-          Seat 3: Yoo4 ($347.17 in chips) 
-          Seat 4: Zecik11 ($322.14 in chips) 
-          Seat 5: falco_lucky7 ($108.80 in chips) 
-          Seat 6: charlybumbum ($100 in chips)
-`
-          let hh = new HandHistory(hhraw, { setHeroPosition: true });
-          expect(hh.hero.position).toEqual('BTN')
-      })
-    });
-  });
+
+
+ 
 });
 
 
-`Table 'Aletheia' 6-max Seat #1 is the button
-Seat 1: charlybumbum ($100 in chips) 
-Seat 2: zocker jo433 ($416.52 in chips) 
-Seat 3: Yoo4 ($347.17 in chips) 
-Seat 4: Zecik11 ($322.14 in chips) 
-Seat 5: falco_lucky7 ($108.80 in chips) 
-Seat 6: reppinR1 ($116.08 in chips) `

@@ -37,7 +37,7 @@ export default class HandHistory {
   private _numOfPlayers: number;
   private _potSize: number;
   private _board: Board = {};
-  private _preflopHand: boolean = false;
+  private _lastStreetPlayed: 'preflop' | 'flop' | 'turn' | 'river';
 
   constructor(hh:string, opts = {}) {
     this._hh = hh;
@@ -59,6 +59,7 @@ export default class HandHistory {
   get time() { return  this._time}
   get stakes() { return  this._stakes}
   get gameType() { return  this._gameType}
+  get lastStreetPlayed() { return  this._lastStreetPlayed }
 
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
@@ -94,16 +95,20 @@ export default class HandHistory {
             this.convertToCard(result[1]),
             this.convertToCard(result[2])
           ]
+          this._lastStreetPlayed = 'flop'
           if (result[3]) {
               this._board.turn = this.convertToCard(result[3]);
+              this._lastStreetPlayed = 'turn'
               if (result[4]) {
                   this._board.river = this.convertToCard(result[4]);
+                  this._lastStreetPlayed = 'river'
+
               }
           }
       }
       
       else {
-          this._preflopHand = true;
+          this._lastStreetPlayed = 'preflop';
       }
 
   }
