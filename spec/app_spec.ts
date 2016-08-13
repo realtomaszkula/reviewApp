@@ -458,6 +458,8 @@ Seat 6: reppinR1 folded on the River`;
     /* implementation searches relative to the beggining of the file
         so make sure to not cut the natural beggining of the hand histories 
         in tests
+
+        setting hero position requires hero name to be found first
     */
 
     describe('when 6 players seated', () => {
@@ -472,12 +474,14 @@ Seat 4: Teiti14 ($27.49 in chips)
 Seat 5: MiPwnYa ($107.49 in chips) 
 Seat 6: reppinR1 ($246.97 in chips) 
 Teiti14: posts small blind $0.50
-reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
+reppinR1: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [3s 9c Ac Td]`
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true, setPlayers: true, setHeroPosition: true } } );
       })
 
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual('CO');
+        expect(hh.hero.position).toEqual('CO');
       });
 
       it('should capture numbers of players seated', () => {     
@@ -496,12 +500,14 @@ Seat 3: Yoo4 ($100 in chips)
 Seat 4: Teiti14 ($27.49 in chips) 
 Seat 6: reppinR1 ($246.97 in chips) 
 Teiti14: posts small blind $0.50
-reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
+reppinR1: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [3s 9c Ac Td]`
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true, setPlayers: true, setHeroPosition: true } } );
       })
 
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual('MP');
+        expect(hh.hero.position).toEqual('MP');
       });
 
       it('should capture numbers of players seated', () => {     
@@ -519,12 +525,14 @@ Seat 2: marquim1980 ($117.77 in chips)
 Seat 3: Yoo4 ($100 in chips) 
 Seat 6: reppinR1 ($246.97 in chips) 
 Teiti14: posts small blind $0.50
-reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
+reppinR1: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [3s 9c Ac Td]`
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true, setPlayers: true, setHeroPosition: true } } );
       })
 
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual('UTG');
+        expect(hh.hero.position).toEqual('UTG');
       });
 
       it('should capture numbers of players seated', () => {     
@@ -541,12 +549,14 @@ Seat 1: Phil ($149.08 in chips)
 Seat 2: marquim1980 ($117.77 in chips) 
 Seat 6: reppinR1 ($246.97 in chips) 
 Teiti14: posts small blind $0.50
-reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
+reppinR1: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [3s 9c Ac Td]`
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true, setPlayers: true, setHeroPosition: true } } );
       })
 
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual('BB');
+        expect(hh.hero.position).toEqual('BB');
       });
 
       it('should capture numbers of players seated', () => {     
@@ -562,12 +572,14 @@ Table 'Aletheia' 6-max Seat #1 is the button
 Seat 1: Phil ($149.08 in chips) 
 Seat 6: reppinR1 ($246.97 in chips) 
 Teiti14: posts small blind $0.50
-reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
+reppinR1: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [3s 9c Ac Td]`
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true, setPlayers: true, setHeroPosition: true } } );
       })
 
       it('should capture hero seat', () => {     
-        expect(hh.tableComposition.heroSeat).toEqual('BB');
+        expect(hh.hero.position).toEqual('BB');
       });
 
       it('should capture numbers of players seated', () => {     

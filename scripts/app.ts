@@ -89,12 +89,12 @@ export default class HandHistory {
   }
 
   private parseHH(options:Options) {
+    if (options.setHeroName) this.setHeroName();
     if (options.setPlayers) this.setPlayers();
     if (options.setPot) this.setPot();
     if (options.setBoard) this.setBoard();
     if (options.setStakes) this.setStakes();
     if (options.setTime) this.setTime();
-    if (options.setHeroName) this.setHeroName();
     if (options.setHeroCards) this.setHeroCards();
     if (options.setHeroPosition) this.setHeroPosition();
   }
@@ -123,7 +123,7 @@ export default class HandHistory {
   private getPossiblePositions(numOfPlayers): Position[] {
     let result;
    if (numOfPlayers > 2) {
-     result = ['BTN' , 'SB' , 'BB' , 'MP' , 'CO' , 'BTN' ].slice(0, numOfPlayers)
+     result = ['BTN', 'SB' , 'BB' , 'UTG' ,'MP' , 'CO'].slice(0, numOfPlayers)
    }  else {
     result =  ['BTN' , 'BB']
    }
@@ -131,7 +131,6 @@ export default class HandHistory {
   }
 
   private setPlayers () {
-
     let btnSeat:string = this.findButtonSeat()
     let seatedPlayers:string[] = this.captureSeats();
 
@@ -168,7 +167,6 @@ export default class HandHistory {
           })
       )
     });
-    
   }
 
   private setPot() {
@@ -230,15 +228,18 @@ export default class HandHistory {
 
   }
 
+  private setHeroPosition() {
+     this._hero.position = this._players.find( p =>  p.name === this._hero.name ).position
+  }
+
   private setHeroName () {
     const regEx = 
       /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
     let result = this.runRegex(regEx)
     this._hero.name = result[1].trim();
   }
-  private setHeroCards() {
-    this._hero = this._hero || new Hero()
 
+  private setHeroCards() {
     const regEx = 
       /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
       const regExResult = this.runRegex(regEx)[1]
@@ -256,12 +257,6 @@ export default class HandHistory {
         } else {
           this._gameType = "Holdem";
         }
-  }
-
-  private setHeroPosition () {
-    const regEx = /Seat #(\d) is the button/;
-    let buttonPosition = parseInt(this.runRegex(regEx)[1])
-
   }
 
   private convertToCard(card: string): Card {
