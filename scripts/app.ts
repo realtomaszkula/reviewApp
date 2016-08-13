@@ -8,10 +8,36 @@ interface Stakes {
   bb: number
 }
 
-interface Hero {
-  name: string;
-  hand: Card[];
-  position: Position ;
+interface Position {
+  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB'
+}
+
+interface PlayerParams {
+  name: string,
+  position:  Position
+}
+
+interface HeroParams extends PlayerParams{
+  hand: Card[]
+}
+
+class Player {
+  public name: string;
+  public position: Position ;
+
+  constructor( params: PlayerParams ) {
+    this.name = params.name
+    this.position = params.position
+  }
+}
+
+class Hero extends Player {
+  public hand: Card[]
+
+  constructor( params: HeroParams ) { 
+    super(params);
+    this.hand = params.hand
+  }
 }
 
 interface Board {
@@ -20,13 +46,9 @@ interface Board {
   river?: Card
 }
 
-interface Position {
-  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB' | 'UNDEFINED'
-}
-
 interface TableComposition {
   heroSeat:  Position ;
-  numberOfPlayersSeated: number;
+  players: Player[];
 }
 
 
@@ -52,7 +74,6 @@ export default class HandHistory {
 
   constructor(hh:string, opts = {}) {
     this._hh = hh;
-    this.initializeHero();
     this.parseHH(opts);
   }
 
@@ -78,25 +99,58 @@ export default class HandHistory {
   get tableComposition() { return  this._tableComposition }
 
 
-  private initializeHero() {
-    this._hero = { name : '', position: { position: 'UNDEFINED' }, hand: [] }
-  }
-
   private findButtonSeat():number {
-    let regEx =  /Seat #(10|[0-9](?!\d))/
+    let regEx =  /Seat #(\d) is the button/
     let result = this.runRegex(regEx);
     return parseInt(result[1])
   }
 
-  private captureSeats(): number[] {
-    // let regEx = /Seat (10|[0-9](?!\d))/
-    let regEx = /Seat (10|[0-9](?!\d))/
-    return result = this.runRegex(regEx);
+  private captureSeats(): string[] {
+    // two first lines are hand nr and date, followed by up to 6 seatss
+    return  this._hh.split('\n').slice(0,7)
+  }
+
+  private getPossiblePositions(numOfPlayers): Position[] {
+    let result;
+   if (numOfPlayers > 2) {
+     result = ['BTN' , 'SB' , 'BB' , 'MP' , 'CO' , 'BTN' ].slice(0, numOfPlayers - 1)
+   }  else {
+    result =  ['BTN' , 'BB']
+   }
+   return result
   }
 
   private setTableComposition () {
+
     let btnSeat:number = this.findButtonSeat()
+    let seatedPlayers:string[] = this.captureSeats();
+
+    // fetching possible positions, starting with btn
+    let possiblePositions: string[] = this.getPossiblePositions(seatedPlayers.length)
+
+    let btnIdx = seatedPlayers.findIndex( str => str.includes(`Seat ${btnSeat}`))
     
+    // rearanging seats so the seats array starts with the button position
+    let firstHalf = seatedPlayers.slice(0,btnIdx)
+    let secondHalf = seatedPlayers.slice(btnIdx)
+    let rearangedSeats = secondHalf.concat(firstHalf)
+
+    // extracting player nicknames
+    let regEx = /(^.+?)(?=\(\$\d+)/
+    let playerNames:string[] = rearangedSeats.map( p =>{
+      // remove 'Seat x: '
+      p = p.slice(8)
+
+      //match until ($123)
+      return p.match(regEx)[0]
+    })
+
+    // matching players nameswith position and pushing
+    playerNames.forEach( playerName => {
+      this._tableComposition.players.push( new Player({name: playerName, position: possiblePositions.shift })
+    })
+    
+
   }
 
   private setPot() {
