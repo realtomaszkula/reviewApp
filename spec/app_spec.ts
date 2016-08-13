@@ -454,21 +454,26 @@ Seat 6: reppinR1 folded on the River`;
     })
   })
 
-  describe('setTableComposition', () => {
+  describe('setPlayers', () => {
+    /* implementation searches relative to the beggining of the file
+        so make sure to not cut the natural beggining of the hand histories 
+        in tests
+    */
+
     describe('when 6 players seated', () => {
       let hh;
       beforeEach(() => {
-                let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #1 is the button
-        Seat 1: Phil ($149.08 in chips) 
-        Seat 2: marquim1980 ($117.77 in chips) 
-        Seat 3: Yoo4 ($100 in chips) 
-        Seat 4: Teiti14 ($27.49 in chips) 
-        Seat 5: MiPwnYa ($107.49 in chips) 
-        Seat 6: reppinR1 ($246.97 in chips) 
-        Teiti14: posts small blind $0.50
-        reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
+let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
+Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: Phil ($149.08 in chips) 
+Seat 2: marquim1980 ($117.77 in chips) 
+Seat 3: Yoo4 ($100 in chips) 
+Seat 4: Teiti14 ($27.49 in chips) 
+Seat 5: MiPwnYa ($107.49 in chips) 
+Seat 6: reppinR1 ($246.97 in chips) 
+Teiti14: posts small blind $0.50
+reppinR1: posts big blind $1`
+        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -476,23 +481,23 @@ Seat 6: reppinR1 folded on the River`;
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(6);
+        expect(hh._players.length).toEqual(6);
       });
     })
 
     describe('when 5 players seated', () => {
       let hh;
       beforeEach(() => {
-                let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #1 is the button
-        Seat 1: Phil ($149.08 in chips) 
-        Seat 2: marquim1980 ($117.77 in chips) 
-        Seat 3: Yoo4 ($100 in chips) 
-        Seat 4: Teiti14 ($27.49 in chips) 
-        Seat 6: reppinR1 ($246.97 in chips) 
-        Teiti14: posts small blind $0.50
-        reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
+let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
+Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: Phil ($149.08 in chips) 
+Seat 2: marquim1980 ($117.77 in chips) 
+Seat 3: Yoo4 ($100 in chips) 
+Seat 4: Teiti14 ($27.49 in chips) 
+Seat 6: reppinR1 ($246.97 in chips) 
+Teiti14: posts small blind $0.50
+reppinR1: posts big blind $1`
+        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -500,22 +505,22 @@ Seat 6: reppinR1 folded on the River`;
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(5);
+        expect(hh._players.length).toEqual(5);
       });
     });
 
     describe('when 4 players seated', () => {
       let hh;
       beforeEach(() => {
-                let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #1 is the button
-        Seat 1: Phil ($149.08 in chips) 
-        Seat 2: marquim1980 ($117.77 in chips) 
-        Seat 3: Yoo4 ($100 in chips) 
-        Seat 6: reppinR1 ($246.97 in chips) 
-        Teiti14: posts small blind $0.50
-        reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
+let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
+Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: Phil ($149.08 in chips) 
+Seat 2: marquim1980 ($117.77 in chips) 
+Seat 3: Yoo4 ($100 in chips) 
+Seat 6: reppinR1 ($246.97 in chips) 
+Teiti14: posts small blind $0.50
+reppinR1: posts big blind $1`
+        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -523,21 +528,21 @@ Seat 6: reppinR1 folded on the River`;
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(4);
+        expect(hh._players.length).toEqual(4);
       });
     })
 
     describe('when 3 players seated', () => {
       let hh;
       beforeEach(() => {
-                let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #1 is the button
-        Seat 1: Phil ($149.08 in chips) 
-        Seat 2: marquim1980 ($117.77 in chips) 
-        Seat 6: reppinR1 ($246.97 in chips) 
-        Teiti14: posts small blind $0.50
-        reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
+let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
+Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: Phil ($149.08 in chips) 
+Seat 2: marquim1980 ($117.77 in chips) 
+Seat 6: reppinR1 ($246.97 in chips) 
+Teiti14: posts small blind $0.50
+reppinR1: posts big blind $1`
+        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -545,20 +550,20 @@ Seat 6: reppinR1 folded on the River`;
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(3);
+        expect(hh._players.length).toEqual(3);
       });
     })
 
     describe('when 2 players seated', () => {
       let hh;
       beforeEach(() => {
-                let hhraw = `[2016/07/31 18:14:13 ET]
-        Table 'Admete III' 6-max Seat #1 is the button
-        Seat 1: Phil ($149.08 in chips) 
-        Seat 6: reppinR1 ($246.97 in chips) 
-        Teiti14: posts small blind $0.50
-        reppinR1: posts big blind $1`
-        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
+let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
+Table 'Aletheia' 6-max Seat #1 is the button
+Seat 1: Phil ($149.08 in chips) 
+Seat 6: reppinR1 ($246.97 in chips) 
+Teiti14: posts small blind $0.50
+reppinR1: posts big blind $1`
+        hh = new HandHistory({ hh: hhraw, options: { setPlayers: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -566,7 +571,7 @@ Seat 6: reppinR1 folded on the River`;
       });
 
       it('should capture numbers of players seated', () => {     
-        expect(hh.tableComposition.numberOfPlayersSeated).toEqual(3);
+        expect(hh._players.length).toEqual(2);
       });
     })
 

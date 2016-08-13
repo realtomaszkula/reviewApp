@@ -9,7 +9,7 @@ interface Stakes {
 }
 
 interface Position {
-  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB'
+  position: 'BTN' | 'CO' | 'UTG' | 'MP' | 'SB' | 'BB' | ''
 }
 
 interface PlayerParams {
@@ -29,7 +29,7 @@ interface Options {
   setHeroName?: boolean;
   setHeroCards?: boolean;
   setHeroPosition?: boolean;
-  setTableComposition?: boolean;
+  setPlayers?: boolean;
 }
 
 interface HHParams {
@@ -84,10 +84,12 @@ export default class HandHistory {
 
   constructor(params:HHParams) {
     this._hh = params.hh;
+    this._hero = new Hero( { name: '', position: '' , hand: []} )
     this.parseHH(params.options);
   }
 
   private parseHH(options:Options) {
+    if (options.setPlayers) this.setPlayers();
     if (options.setPot) this.setPot();
     if (options.setBoard) this.setBoard();
     if (options.setStakes) this.setStakes();
@@ -95,7 +97,6 @@ export default class HandHistory {
     if (options.setHeroName) this.setHeroName();
     if (options.setHeroCards) this.setHeroCards();
     if (options.setHeroPosition) this.setHeroPosition();
-    if (options.setTableComposition) this.setTableComposition();
   }
 
   get board() { return  this._board}
@@ -109,7 +110,7 @@ export default class HandHistory {
 
 
   private findButtonSeat():string {
-    let regEx =  /Seat #(\d) is the button/
+    const regEx =  /Seat #(\d) is the button/
     let result = this.runRegex(regEx);
     return result[1]
   }
@@ -129,7 +130,7 @@ export default class HandHistory {
    return result
   }
 
-  private setTableComposition () {
+  private setPlayers () {
 
     let btnSeat:string = this.findButtonSeat()
     let seatedPlayers:string[] = this.captureSeats();
@@ -144,15 +145,18 @@ export default class HandHistory {
     let secondHalf = seatedPlayers.slice(btnIdx)
     let rearangedSeats = secondHalf.concat(firstHalf)
 
-    // extracting player nicknames
-    let regEx = /(^.+?)(?=\(\$\d+)/
-    let playerNames:string[] = rearangedSeats.map( p =>{
-      // remove 'Seat x: '
-      p = p.slice(8)
 
-      //match until ($123)
-      return p.match(regEx)[0]
+    // remove 'Seat x: '
+    let stripSeat:string[] = rearangedSeats.map( s => s = s.slice(8) )
+
+    // keep only strings with player nicks (will end with '($\d\d)' which is stack size)
+    const regEx = /(^.+?)(?=\(\$\d+)/
+    let playerNames: string[] = [];
+    stripSeat.forEach( s =>  {
+      let result = s.match(regEx);
+      if (result) playerNames.push(result[0])
     })
+
 
     // matching players nameswith position and pushing
     this._players = []
@@ -165,11 +169,10 @@ export default class HandHistory {
       )
     });
     
-
   }
 
   private setPot() {
-    let regEx = 
+    const regEx = 
       /Total pot \$((\d+)(\.\d+)?)/
     let result = this.runRegex(regEx);
     this._potSize = parseFloat(result[1]);
@@ -177,7 +180,7 @@ export default class HandHistory {
 
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
-    let regEx = /\(([^\/]+)\/([^\)]+)\)/
+    const regEx = /\(([^\/]+)\/([^\)]+)\)/
     let result = this.runRegex(regEx);
 
     let step1 = result[0].split(' ');
@@ -189,7 +192,7 @@ export default class HandHistory {
 
   private setTime () {
     let yr, mth, day, h, m, s;
-    let regEx = 
+    const regEx = 
       /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/
     let result = this.runRegex(regEx);
 
@@ -200,7 +203,7 @@ export default class HandHistory {
   }
 
   private setBoard() {
-      let regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
+      const regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
       let result = this.runRegex(regEx);
       if (result) {
           Array.prototype.shift.call(result);
@@ -228,16 +231,17 @@ export default class HandHistory {
   }
 
   private setHeroName () {
-    let regEx = 
+    const regEx = 
       /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
     let result = this.runRegex(regEx)
     this._hero.name = result[1].trim();
-
   }
   private setHeroCards() {
-    let regEx = 
+    this._hero = this._hero || new Hero()
+
+    const regEx = 
       /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
-      let regExResult = this.runRegex(regEx)[1]
+      const regExResult = this.runRegex(regEx)[1]
       let result = regExResult.split(' ');
 
         this._hero.hand = [ 
@@ -255,7 +259,7 @@ export default class HandHistory {
   }
 
   private setHeroPosition () {
-    let regEx = /Seat #(\d) is the button/;
+    const regEx = /Seat #(\d) is the button/;
     let buttonPosition = parseInt(this.runRegex(regEx)[1])
 
   }
@@ -288,7 +292,7 @@ export default class HandHistory {
   }
 
   private runRegex(regExString, flag = '') {
-    let regExp = new RegExp(regExString, flag)
+    const regExp = new RegExp(regExString, flag)
 
     if (flag) {
       let result = [], match;
