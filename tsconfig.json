@@ -8,6 +8,7 @@
   },
   "files": [
     "typings/index.d.ts",
+    "scripts/modules/regExp.ts",
     "spec/app_spec.ts",
     "scripts/app.ts",
     "debug.ts"

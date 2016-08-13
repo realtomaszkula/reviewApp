@@ -1,3 +1,7 @@
+/// <reference path="/home/tomasz/Sites/finerReview/scripts/modules/regExp.ts" />
+
+import rgx = myRegEx.hh;
+
 interface Card {
   suit: string;
   value: number
@@ -110,8 +114,7 @@ export default class HandHistory {
 
 
   private findButtonSeat():string {
-    const regEx =  /Seat #(\d) is the button/
-    let result = this.runRegex(regEx);
+    let result = this.runRegex(rgx.buttonSeat);
     return result[1]
   }
 
@@ -141,15 +144,13 @@ export default class HandHistory {
     let secondHalf = seatedPlayers.slice(btnIdx)
     let rearangedSeats = secondHalf.concat(firstHalf)
 
-
     // remove 'Seat x: '
     let stripSeat:string[] = rearangedSeats.map( s => s = s.slice(8) )
 
     // keep only strings with player nicks (will end with '($\d\d)' which is stack size)
-    const regEx = /(^.+?)(?=\(\$\d+)/
     let playerNames: string[] = [];
     stripSeat.forEach( s =>  {
-      let result = s.match(regEx);
+      let result = s.match(rgx.playerNicks);
       if (result) playerNames.push(result[0])
     })
 
@@ -170,9 +171,7 @@ export default class HandHistory {
   }
 
   private setPot() {
-    const regEx = 
-      /Total pot \$((\d+)(\.\d+)?)/
-    let result = this.runRegex(regEx);
+    let result = this.runRegex(rgx.pot);
     this._potSize = parseFloat(result[1]);
   }
 
@@ -190,9 +189,8 @@ export default class HandHistory {
 
   private setTime () {
     let yr, mth, day, h, m, s;
-    const regEx = 
-      /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/
-    let result = this.runRegex(regEx);
+
+    let result = this.runRegex(rgx.time);
 
     Array.prototype.shift.call(result);
 
@@ -201,30 +199,29 @@ export default class HandHistory {
   }
 
   private setBoard() {
-      const regEx = /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/;
-      let result = this.runRegex(regEx);
-      if (result) {
-          Array.prototype.shift.call(result);
-          this._board.flop = [
-            this.convertToCard(result[0]),
-            this.convertToCard(result[1]),
-            this.convertToCard(result[2])
-          ]
-          this._lastStreetPlayed = 'flop'
-          if (result[3]) {
-              this._board.turn = this.convertToCard(result[3]);
-              this._lastStreetPlayed = 'turn'
-              if (result[4]) {
-                  this._board.river = this.convertToCard(result[4]);
-                  this._lastStreetPlayed = 'river'
+    let result = this.runRegex(rgx.board);
+    if (result) {
+        Array.prototype.shift.call(result);
+        this._board.flop = [
+          this.convertToCard(result[0]),
+          this.convertToCard(result[1]),
+          this.convertToCard(result[2])
+        ]
+        this._lastStreetPlayed = 'flop'
+        if (result[3]) {
+            this._board.turn = this.convertToCard(result[3]);
+            this._lastStreetPlayed = 'turn'
+            if (result[4]) {
+                this._board.river = this.convertToCard(result[4]);
+                this._lastStreetPlayed = 'river'
 
-              }
-          }
-      }
-      
-      else {
-          this._lastStreetPlayed = 'preflop';
-      }
+            }
+        }
+    }
+    
+    else {
+        this._lastStreetPlayed = 'preflop';
+    }
 
   }
 
@@ -233,30 +230,26 @@ export default class HandHistory {
   }
 
   private setHeroName () {
-    const regEx = 
-      /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/;
-    let result = this.runRegex(regEx)
+    let result = this.runRegex(rgx.heroName)
     this._hero.name = result[1].trim();
   }
 
   private setHeroCards() {
-    const regEx = 
-      /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/;
-      const regExResult = this.runRegex(regEx)[1]
-      let result = regExResult.split(' ');
+    const regExResult = this.runRegex(rgx.heroCards)[1]
+    let result = regExResult.split(' ');
 
-        this._hero.hand = [ 
-          this.convertToCard(result[0]), 
-          this.convertToCard(result[1]), 
-        ]
-        
-        if (result[2] && result[3]) {
-          this._gameType = "Omaha";
-          this._hero.hand.push(this.convertToCard(result[2]));
-          this._hero.hand.push(this.convertToCard(result[3]));
-        } else {
-          this._gameType = "Holdem";
-        }
+      this._hero.hand = [ 
+        this.convertToCard(result[0]), 
+        this.convertToCard(result[1]), 
+      ]
+      
+      if (result[2] && result[3]) {
+        this._gameType = "Omaha";
+        this._hero.hand.push(this.convertToCard(result[2]));
+        this._hero.hand.push(this.convertToCard(result[3]));
+      } else {
+        this._gameType = "Holdem";
+      }
   }
 
   private convertToCard(card: string): Card {
