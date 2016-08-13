@@ -134,9 +134,6 @@ export default class HandHistory {
     let btnSeat:string = this.findButtonSeat()
     let seatedPlayers:string[] = this.captureSeats();
 
-    // fetching possible positions, starting with btn
-    let possiblePositions: Position[] = this.getPossiblePositions(seatedPlayers.length)
-
     let btnIdx = seatedPlayers.findIndex( str => str.includes(`Seat ${btnSeat}`))
     
     // rearanging seats so the seats array starts with the button position
@@ -156,6 +153,9 @@ export default class HandHistory {
       if (result) playerNames.push(result[0])
     })
 
+
+    // fetching possible positions
+    let possiblePositions: Position[] = this.getPossiblePositions(playerNames.length)
 
     // matching players nameswith position and pushing
     this._players = []
@@ -300,15 +300,6 @@ export default class HandHistory {
       return this._hh.match(regExp)
     }
   }
-}
-
-function benchmark (func, times = 10000 ) {
-  let t1 = Date.now() / 1000
-  for (let i = 0; i < times; i++) {
-    func();
-  }
-  let t2 = Date.now() / 1000
-  console.log(t2-t1)
 }
 
 
