@@ -21,6 +21,22 @@ interface HeroParams extends PlayerParams{
   hand: Card[]
 }
 
+interface Options {
+  setPot?: boolean;
+  setBoard?: boolean;
+  setStakes?: boolean;
+  setTime?: boolean;
+  setHeroName?: boolean;
+  setHeroCards?: boolean;
+  setHeroPosition?: boolean;
+  setTableComposition?: boolean;
+}
+
+interface HHParams {
+  hh: string,
+  options: Options
+}
+
 class Player {
   public name: string;
   public position: Position ;
@@ -46,12 +62,6 @@ interface Board {
   river?: Card
 }
 
-interface TableComposition {
-  heroSeat:  Position ;
-  players: Player[];
-}
-
-
 export default class HandHistory {
 
   private _hh: string;
@@ -70,23 +80,22 @@ export default class HandHistory {
   private _lastStreetPlayed: 'preflop' | 'flop' | 'turn' | 'river';
 
   // table composition
-  private _tableComposition: TableComposition;
+  private _players: Player[];
 
-  constructor(hh:string, opts = {}) {
-    this._hh = hh;
-    this.parseHH(opts);
+  constructor(params:HHParams) {
+    this._hh = params.hh;
+    this.parseHH(params.options);
   }
 
-  private parseHH(opts) {
-    if (opts.setPot) this.setPot();
-    if (opts.setBoard) this.setBoard();
-    if (opts.setStakes) this.setStakes();
-    if (opts.setTime) this.setTime();
-    if (opts.setHeroName) this.setHeroName();
-    if (opts.setHeroCards) this.setHeroCards();
-    if (opts.setHeroPosition) this.setHeroPosition();
-    if (opts.setTableComposition) this.setTableComposition();
-
+  private parseHH(options:Options) {
+    if (options.setPot) this.setPot();
+    if (options.setBoard) this.setBoard();
+    if (options.setStakes) this.setStakes();
+    if (options.setTime) this.setTime();
+    if (options.setHeroName) this.setHeroName();
+    if (options.setHeroCards) this.setHeroCards();
+    if (options.setHeroPosition) this.setHeroPosition();
+    if (options.setTableComposition) this.setTableComposition();
   }
 
   get board() { return  this._board}
@@ -96,24 +105,24 @@ export default class HandHistory {
   get gameType() { return  this._gameType}
   get lastStreetPlayed() { return  this._lastStreetPlayed }
   get potSize() { return  this._potSize }
-  get tableComposition() { return  this._tableComposition }
+  get players() { return  this._players }
 
 
-  private findButtonSeat():number {
+  private findButtonSeat():string {
     let regEx =  /Seat #(\d) is the button/
     let result = this.runRegex(regEx);
-    return parseInt(result[1])
+    return result[1]
   }
 
   private captureSeats(): string[] {
     // two first lines are hand nr and date, followed by up to 6 seatss
-    return  this._hh.split('\n').slice(0,7)
+    return  this._hh.split('\n').slice(2,8)
   }
 
   private getPossiblePositions(numOfPlayers): Position[] {
     let result;
    if (numOfPlayers > 2) {
-     result = ['BTN' , 'SB' , 'BB' , 'MP' , 'CO' , 'BTN' ].slice(0, numOfPlayers - 1)
+     result = ['BTN' , 'SB' , 'BB' , 'MP' , 'CO' , 'BTN' ].slice(0, numOfPlayers)
    }  else {
     result =  ['BTN' , 'BB']
    }
@@ -122,11 +131,11 @@ export default class HandHistory {
 
   private setTableComposition () {
 
-    let btnSeat:number = this.findButtonSeat()
+    let btnSeat:string = this.findButtonSeat()
     let seatedPlayers:string[] = this.captureSeats();
 
     // fetching possible positions, starting with btn
-    let possiblePositions: string[] = this.getPossiblePositions(seatedPlayers.length)
+    let possiblePositions: Position[] = this.getPossiblePositions(seatedPlayers.length)
 
     let btnIdx = seatedPlayers.findIndex( str => str.includes(`Seat ${btnSeat}`))
     
@@ -146,9 +155,15 @@ export default class HandHistory {
     })
 
     // matching players nameswith position and pushing
+    this._players = []
     playerNames.forEach( playerName => {
-      this._tableComposition.players.push( new Player({name: playerName, position: possiblePositions.shift })
-    })
+      this._players.push( 
+          new Player({
+          name: playerName.trim(), 
+            position: possiblePositions.shift() 
+          })
+      )
+    });
     
 
   }

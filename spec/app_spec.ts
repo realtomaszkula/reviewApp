@@ -6,7 +6,7 @@ describe('Hand History', () => {
 
   xdescribe('when creating 10 000 elements', () => {
     it('should finish in less than 5s', () => {
-        let hhRaw= `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:25:01 CET [2016/07/31 18:25:01 ET]
+        let hhraw= `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:25:01 CET [2016/07/31 18:25:01 ET]
 Table 'Aletheia' 6-max Seat #1 is the button
 Seat 1: charlybumbum ($100 in chips) 
 Seat 2: zocker jo433 ($416.52 in chips) 
@@ -56,7 +56,7 @@ Seat 6: reppinR1 folded on the River`;
 
         let t1 = Date.now() / 1000
         for (let i = 0; i < 10000; i++) {
-          let x = new HandHistory(hhRaw, opts);
+          let x = new HandHistory({ hh: hhraw, options: opts });
         }
         let t2 = Date.now() / 1000
         expect(t2 - t1).toBeLessThan(5);        
@@ -70,7 +70,7 @@ Seat 6: reppinR1 folded on the River`;
 
       beforeEach(() => {
         let hhraw = `Total pot $57 | Rake $2.50 Board [Js Tc 2d 4s 5s] Seat 1:`;
-        hh = new HandHistory(hhraw, { setBoard: true });
+        hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
       })
 
       it('should create board with flop turn and river', () => {
@@ -131,7 +131,7 @@ Seat 6: reppinR1 folded on the River`;
       let hh;
       beforeEach(() => {
         let hhraw = `Total pot $57 | Rake $2.50 Board [Ad Ks 4s 4d] Seat 1:`;
-        hh = new HandHistory(hhraw, { setBoard: true });
+        hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
       });
 
       it('should create board with just flop and turn', () => {
@@ -149,7 +149,7 @@ Seat 6: reppinR1 folded on the River`;
       let hh;
       beforeEach(() => {
         let hhraw = `Total pot $57 | Rake $2.50 Board [Ad Ks 4s] Seat 1:`;
-        hh = new HandHistory(hhraw, { setBoard: true });
+        hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
       });
 
       it('should create board with just flop', () => {
@@ -166,7 +166,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('without board', () => {
       it('should correctly set last street played', () => {
         let hhraw = 'Total pot $2.50 | Rake $0 '
-        let hh = new HandHistory(hhraw, { setBoard: true });
+        let hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
         expect(hh.lastStreetPlayed).toEqual('preflop');
       })
     });
@@ -177,7 +177,7 @@ Seat 6: reppinR1 folded on the River`;
 
     it ('should create stakes object with correct properties', () => {
       let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01`;
-      hh = new HandHistory(hhraw, { setStakes: true });
+      hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       expect(hh.stakes).toBeDefined
       expect(hh.stakes.sb).toBeDefined();
       expect(hh.stakes.bb).toBeDefined();
@@ -186,7 +186,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $0.02/$0.05', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.02/$0.05 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -201,7 +201,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $0.05/$0.10', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.05/$0.10 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -217,7 +217,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $0.1/$0.25', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.10/$0.25 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -232,7 +232,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $0.25/$0.50', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.25/$0.50 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -247,7 +247,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $0.5/$1.0', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -262,7 +262,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $1/$2', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($1/$2 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -277,7 +277,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $2/$4', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($2/$4 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -292,7 +292,7 @@ Seat 6: reppinR1 folded on the River`;
     describe('for $3/$6', () => {
       beforeEach(() => {
         let hhraw = `PokerStars Hand #156701873519:  Omaha Pot Limit ($3/$6 USD) - 2016/08/01`;
-       hh = new HandHistory(hhraw, { setStakes: true });
+       hh = new HandHistory({ hh: hhraw, options: { setStakes: true } });
       })
 
       it ('should create correct sb ', () => {
@@ -311,25 +311,25 @@ Seat 6: reppinR1 folded on the River`;
     describe('when setting hero name', () => {
       it('should capture names with alphanumeric characters', () => {
         let hhraw = `Dealt to reppinR1 [Js 8c]`;
-        hh = new HandHistory(hhraw, { setHeroName: true });
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true } } );
         expect(hh.hero.name).toEqual('reppinR1');
       });
 
       it('should capture names with spaces', () => {
         let hhraw = `Dealt to Donald J Trump [As 4c]`;
-        hh = new HandHistory(hhraw, { setHeroName: true });
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true } } );
         expect(hh.hero.name).toEqual('Donald J Trump');
       });
 
       it('should capture names with squarebarkets characters', () => {
         let hhraw = `Dealt to Donald J [As] [As 4c]`;
-        hh = new HandHistory(hhraw, { setHeroName: true });
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true } } );
         expect(hh.hero.name).toEqual('Donald J [As]');
       });
 
       it('should capture names with special characters', () => {
         let hhraw = `Dealt to *&^%$@#A SD<>?:"{} [As 4c]`;
-        hh = new HandHistory(hhraw, { setHeroName: true });
+        hh = new HandHistory({ hh: hhraw, options: { setHeroName: true } } );
         expect(hh.hero.name).toEqual('*&^%$@#A SD<>?:"{}');
       });
     });
@@ -344,7 +344,7 @@ Seat 6: reppinR1 folded on the River`;
 
         beforeEach(() => {
           let hhraw = `Dealt to reppinR1 [Js 8c]`;
-          hh = new HandHistory(hhraw, { setHeroCards: true });
+          hh = new HandHistory({ hh: hhraw, options: { setHeroCards: true } });
         });
 
         it('should set game type as holdem', () => {
@@ -381,7 +381,7 @@ Seat 6: reppinR1 folded on the River`;
 
         beforeEach(() => {
           let hhraw = `Dealt to reppinR1 [As Kd Qh 4c]`;
-          hh = new HandHistory(hhraw, { setHeroCards: true });
+          hh = new HandHistory({ hh: hhraw, options: { setHeroCards: true } });
         });
 
         it('should set game type as omaha', () => {
@@ -437,7 +437,7 @@ Seat 6: reppinR1 folded on the River`;
         let hhraw = `*** SUMMARY ***
         Total pot $10.50 | Rake $0.52 
         Board [7c 9h Ks]`
-        let hh = new HandHistory(hhraw, { setPot: true });
+        let hh = new HandHistory({ hh: hhraw, options: { setPot: true } } );
       
         expect(hh.potSize).toEqual(10.5);
       });
@@ -446,7 +446,7 @@ Seat 6: reppinR1 folded on the River`;
         let hhraw = `*** SUMMARY ***
         Total pot $10 | Rake $0.52 
         Board [7c 9h Ks]`
-        let hh = new HandHistory(hhraw, { setPot: true });
+        let hh = new HandHistory({ hh: hhraw, options: { setPot: true } } );
 
         expect(hh.potSize).toEqual(10);
       });
@@ -468,7 +468,7 @@ Seat 6: reppinR1 folded on the River`;
         Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
-        hh = new HandHistory(hhraw, { setTableComposition: true });
+        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -492,7 +492,7 @@ Seat 6: reppinR1 folded on the River`;
         Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
-        hh = new HandHistory(hhraw, { setTableComposition: true });
+        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -515,7 +515,7 @@ Seat 6: reppinR1 folded on the River`;
         Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
-        hh = new HandHistory(hhraw, { setTableComposition: true });
+        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -537,7 +537,7 @@ Seat 6: reppinR1 folded on the River`;
         Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
-        hh = new HandHistory(hhraw, { setTableComposition: true });
+        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
       })
 
       it('should capture hero seat', () => {     
@@ -558,7 +558,7 @@ Seat 6: reppinR1 folded on the River`;
         Seat 6: reppinR1 ($246.97 in chips) 
         Teiti14: posts small blind $0.50
         reppinR1: posts big blind $1`
-        hh = new HandHistory(hhraw, { setTableComposition: true });
+        hh = new HandHistory({ hh: hhraw, options: { setTableComposition: true } } );
       })
 
       it('should capture hero seat', () => {     
