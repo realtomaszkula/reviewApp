@@ -21,6 +21,26 @@ interface HeroParams extends PlayerParams{
   hand: Card[]
 }
 
+interface HandHistorySections {
+  meta: string[],
+  seats: string[],
+  action: Action,
+  summary: string[]
+}
+
+interface Meta {
+  format: 'Omaha' | 'Holdem',
+  stakes: Stakes,
+  date?: Date,
+}
+
+interface Action {
+  preflop: string[];
+  flop?: string[];
+  turn?: string[];
+  river?: string[];
+}
+
 interface Options {
   setPot?: boolean;
   setBoard?: boolean;
@@ -65,6 +85,7 @@ interface Board {
 export default class HandHistory {
 
   private _hh: string;
+  private _hhSections: HandHistorySections;
 
   private _rgx = {
       buttonSeat:  /Seat #(\d) is the button/,
@@ -95,6 +116,7 @@ export default class HandHistory {
 
   constructor(params:HHParams) {
     this._hh = params.hh;
+    this.sliceHH();
     this._hero = new Hero( { name: '', position: { position: ''} , hand: []} )
     this.parseHH(params.options);
   }
@@ -119,6 +141,65 @@ export default class HandHistory {
   get potSize() { return  this._potSize }
   get players() { return  this._players }
 
+  private sliceHH() {
+    let lines:string[] = this._hh.split('\n');
+
+    let preflopIdx, flopIdx, turnIdx, riverIdx, showdownIdx, summaryIdx;
+
+    lines.forEach( (line, idx) => {
+      if (line.includes('*** HOLE CARDS ***')) {
+        preflopIdx = idx;
+      } else if (line.includes('*** FLOP ***')) {
+        flopIdx = idx;
+      } else if (line.includes('*** TURN ***')) {
+        turnIdx = idx;
+      } else if (line.includes('*** RIVER ***')) {
+        riverIdx = idx;
+      } else if (line.includes('*** SHOW DOWN ***')) {
+        showdownIdx = idx
+      } else if (line.includes('*** SUMMARY ***')) {
+        summaryIdx = idx
+      }
+    })
+
+    this._hhSections.meta = lines.slice(0, 2);
+    this._hhSections.seats = lines.slice(2, preflopIdx);
+
+    let action:Action;
+
+
+    let lastStreet;
+    if(!flopIdx) {
+      lastStreet = 'preflop'
+    } else if(!turnIdx) {
+      lastStreet = 'flop'
+    } else if(!riverIdx) {
+      lastStreet = 'turn'
+    } else {
+      lastStreet = 'river'
+    }
+
+    if (lastStreet === 'preflop') {
+        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, showdownIdx);
+    } else if (lastStreet === 'flop') {
+       this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
+        this._hhSections.action.flop = lines.slice(flopIdx + 1, showdownIdx);
+    } else if (lastStreet === 'turn') {
+        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
+        this._hhSections.action.flop = lines.slice(flopIdx + 1, turnIdx);
+        this._hhSections.action.turn = lines.slice(turnIdx + 1, showdownIdx);
+    } else if (lastStreet === 'river') {
+        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
+        this._hhSections.action.flop = lines.slice(flopIdx + 1, turnIdx);
+        this._hhSections.action.turn = lines.slice(turnIdx + 1, riverIdx);
+      if (showdownIdx) {
+        this._hhSections.action.river = lines.slice(riverIdx + 1, showdownIdx);
+      } else {
+        this._hhSections.action.river = lines.slice(riverIdx + 1, summaryIdx);
+      }
+    }
+
+  }
 
   private findButtonSeat():string {
     let result = this.runRegex(this._rgx.buttonSeat);
