@@ -1,16 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "scripts/js",
+    "outDir": "js",
     "watch": true,
     "target": "es6",
-    "sourceMap": true
-  },
-  "files": [
-    "typings/index.d.ts",
-    "scripts/modules/regExp.ts",
-    "spec/app_spec.ts",
-    "scripts/app.ts",
-    "debug.ts"
-  ]
+    "sourceMap": true,
+    "rootDir": "ts"
+  }
 }

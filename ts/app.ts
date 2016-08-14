@@ -1,5 +1,3 @@
-/// <reference path="/home/tomasz/Sites/finerReview/scripts/modules/regExp.ts" />
-
 interface Card {
   suit: string;
   value: number
