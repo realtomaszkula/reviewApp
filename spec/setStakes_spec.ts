@@ -1,6 +1,5 @@
-/// <reference path="/home/tomasz/Sites/finerReview/scripts/app.ts" />
-
-import HandHistory from "../ts/app";
+/// <reference path="/home/tomasz/Sites/finerReview/app/app.ts" />
+import HandHistory from "../app/app";
 
 describe('HandHistory', () => {
   describe('setStakes', () => {

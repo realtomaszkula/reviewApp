@@ -1,6 +1,6 @@
-/// <reference path="/home/tomasz/Sites/finerReview/scripts/app.ts" />
+/// <reference path="/home/tomasz/Sites/finerReview/app/app.ts" />
 
-import HandHistory from "../ts/app";
+import HandHistory from "../app/app";
 
 describe('Hand History', () => {
 
