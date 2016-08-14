@@ -24,6 +24,7 @@ interface HeroParams extends PlayerParams{
 interface HandHistorySections {
   meta: string[],
   seats: string[],
+  hero: string,
   action: Action,
   summary: string[]
 }
@@ -165,6 +166,7 @@ export default class HandHistory {
     this._hhSections = {
       meta: lines.slice(0, 2),
       seats: lines.slice(2, preflopIdx),
+      hero: lines[preflopIdx + 1, preflopIdx + 2],
       action: { preflop: [] },
       summary: lines.slice(summaryIdx)
     };
@@ -206,13 +208,8 @@ export default class HandHistory {
   }
 
   private findButtonSeat():string {
-    let result = this.runRegex(this._rgx.buttonSeat);
+    let result = this.runRegex(this._rgx.buttonSeat, this._hhSections.meta.join('\n'));
     return result[1]
-  }
-
-  private captureSeats(): string[] {
-    // two first lines are hand nr and date, followed by up to 6 seatss
-    return  this._hh.split('\n').slice(2,8)
   }
 
   private getPossiblePositions(numOfPlayers): Position[] {
@@ -227,7 +224,7 @@ export default class HandHistory {
 
   private setPlayers () {
     let btnSeat:string = this.findButtonSeat()
-    let seatedPlayers:string[] = this.captureSeats();
+    let seatedPlayers:string[] = this._hhSections.seats
 
     let btnIdx = seatedPlayers.findIndex( str => str.includes(`Seat ${btnSeat}`))
     
@@ -263,14 +260,13 @@ export default class HandHistory {
   }
 
   private setPot() {
-    let result = this.runRegex(this._rgx.pot);
+    let result = this.runRegex(this._rgx.pot, this._hhSections.summary.join('\n'));
     this._potSize = parseFloat(result[1]);
   }
 
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
-    const regEx = /\(([^\/]+)\/([^\)]+)\)/
-    let result = this.runRegex(regEx);
+    let result = this.runRegex(this._rgx.stakes, this._hhSections.summary.join('\n'));
 
     let step1 = result[0].split(' ');
     let step2 = step1[0].split('/');
@@ -282,7 +278,7 @@ export default class HandHistory {
   private setTime () {
     let yr, mth, day, h, m, s;
 
-    let result = this.runRegex(this._rgx.time);
+    let result = this.runRegex(this._rgx.time, this._hhSections.meta.join('\n'));
 
     Array.prototype.shift.call(result);
 
@@ -291,7 +287,7 @@ export default class HandHistory {
   }
 
   private setBoard() {
-    let result = this.runRegex(this._rgx.board);
+    let result = this.runRegex(this._rgx.board, this._hhSections.summary.join('\n'));
     if (result) {
         Array.prototype.shift.call(result);
         this._board.flop = [
@@ -322,12 +318,12 @@ export default class HandHistory {
   }
 
   private setHeroName () {
-    let result = this.runRegex(this._rgx.heroName)
+    let result = this.runRegex(this._rgx.heroName, this._hhSections.hero)
     this._hero.name = result[1].trim();
   }
 
   private setHeroCards() {
-    const regExResult = this.runRegex(this._rgx.heroCards)[1]
+    const regExResult = this.runRegex(this._rgx.heroCards, this._hhSections.hero)[1]
     let result = regExResult.split(' ');
 
       this._hero.hand = [ 
@@ -371,18 +367,18 @@ export default class HandHistory {
     }
   }
 
-  private runRegex(regExString, flag = '') {
+  private runRegex(regExString, stringToMatchAgainst = this._hh, flag = '') {
     const regExp = new RegExp(regExString, flag)
 
     if (flag) {
       let result = [], match;
 
-      while (match = regExp.exec(this._hh)) {
+      while (match = regExp.exec(stringToMatchAgainst)) {
         result.push(match)
       }
       return result
     } else {
-      return this._hh.match(regExp)
+      return stringToMatchAgainst.match(regExp)
     }
   }
 }
