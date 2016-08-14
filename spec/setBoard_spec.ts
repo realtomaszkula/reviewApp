@@ -1,8 +1,8 @@
 /// <reference path="/home/tomasz/Sites/finerReview/scripts/app.ts" />
-
 import HandHistory from "../ts/app";
 
-describe('setBoard', () => {
+describe('Hand History', () => {
+  describe('setBoard', () => {
     describe('with five cards specified', () => {
       let hh;
 
@@ -109,3 +109,4 @@ describe('setBoard', () => {
       })
     });
   });
+});
