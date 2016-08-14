@@ -1,7 +1,5 @@
 /// <reference path="/home/tomasz/Sites/finerReview/scripts/modules/regExp.ts" />
 
-import rgx = myRegEx.hh;
-
 interface Card {
   suit: string;
   value: number
@@ -70,6 +68,17 @@ export default class HandHistory {
 
   private _hh: string;
 
+  private _rgx = {
+      buttonSeat:  /Seat #(\d) is the button/,
+      playerNicks:  /(^.+?)(?=\(\$\d+)/,
+      pot: /Total pot \$((\d+)(\.\d+)?)/,
+      stakes: /\(([^\/]+)\/([^\)]+)\)/,
+      time:  /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/,
+      board: /Board \[([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])\s([2-9|T|J|Q|K|A][s|c|d|h])[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?[\]|\s]([2-9|T|J|Q|K|A][s|c|d|h])?/,
+      heroName: /Dealt to (.+?(?=[[][2-9|T|J|Q|K|A][s|c|d|h]\s[2-9|T|J|Q|K|A][s|c|d|h]))/,
+      heroCards: /[[]([2-9|T|J|Q|K|A][s|c|d|h](?:\s[2-9|T|J|Q|K|A][s|c|d|h]){1,3})/
+    }
+
   // meta
   private _time:  number;
   private _stakes: Stakes;
@@ -88,7 +97,7 @@ export default class HandHistory {
 
   constructor(params:HHParams) {
     this._hh = params.hh;
-    this._hero = new Hero( { name: '', position: '' , hand: []} )
+    this._hero = new Hero( { name: '', position: { position: ''} , hand: []} )
     this.parseHH(params.options);
   }
 
@@ -114,7 +123,7 @@ export default class HandHistory {
 
 
   private findButtonSeat():string {
-    let result = this.runRegex(rgx.buttonSeat);
+    let result = this.runRegex(this._rgx.buttonSeat);
     return result[1]
   }
 
@@ -150,7 +159,7 @@ export default class HandHistory {
     // keep only strings with player nicks (will end with '($\d\d)' which is stack size)
     let playerNames: string[] = [];
     stripSeat.forEach( s =>  {
-      let result = s.match(rgx.playerNicks);
+      let result = s.match(this._rgx.playerNicks);
       if (result) playerNames.push(result[0])
     })
 
@@ -171,7 +180,7 @@ export default class HandHistory {
   }
 
   private setPot() {
-    let result = this.runRegex(rgx.pot);
+    let result = this.runRegex(this._rgx.pot);
     this._potSize = parseFloat(result[1]);
   }
 
@@ -190,7 +199,7 @@ export default class HandHistory {
   private setTime () {
     let yr, mth, day, h, m, s;
 
-    let result = this.runRegex(rgx.time);
+    let result = this.runRegex(this._rgx.time);
 
     Array.prototype.shift.call(result);
 
@@ -199,7 +208,7 @@ export default class HandHistory {
   }
 
   private setBoard() {
-    let result = this.runRegex(rgx.board);
+    let result = this.runRegex(this._rgx.board);
     if (result) {
         Array.prototype.shift.call(result);
         this._board.flop = [
@@ -230,12 +239,12 @@ export default class HandHistory {
   }
 
   private setHeroName () {
-    let result = this.runRegex(rgx.heroName)
+    let result = this.runRegex(this._rgx.heroName)
     this._hero.name = result[1].trim();
   }
 
   private setHeroCards() {
-    const regExResult = this.runRegex(rgx.heroCards)[1]
+    const regExResult = this.runRegex(this._rgx.heroCards)[1]
     let result = regExResult.split(' ');
 
       this._hero.hand = [ 
