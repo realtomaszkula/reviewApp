@@ -1,6 +1,7 @@
  /// <reference path="/home/tomasz/Sites/finerReview/app/app.ts" />
 import HandHistory from "../app/app";
 
+
 describe('HandHistory', () => {
  describe('setPlayers', () => {
     /* implementation searches relative to the beggining of the file

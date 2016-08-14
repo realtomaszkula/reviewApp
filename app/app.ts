@@ -162,11 +162,14 @@ export default class HandHistory {
       }
     })
 
-    this._hhSections.meta = lines.slice(0, 2);
-    this._hhSections.seats = lines.slice(2, preflopIdx);
+    this._hhSections = {
+      meta: lines.slice(0, 2),
+      seats: lines.slice(2, preflopIdx),
+      action: { preflop: [] },
+      summary: lines.slice(summaryIdx)
+    };
 
     let action:Action;
-
 
     let lastStreet;
     if(!flopIdx) {
@@ -180,25 +183,26 @@ export default class HandHistory {
     }
 
     if (lastStreet === 'preflop') {
-        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, showdownIdx);
+      this._hhSections.action.preflop = lines.slice(preflopIdx + 2, showdownIdx);
     } else if (lastStreet === 'flop') {
-       this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
-        this._hhSections.action.flop = lines.slice(flopIdx + 1, showdownIdx);
-    } else if (lastStreet === 'turn') {
-        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
-        this._hhSections.action.flop = lines.slice(flopIdx + 1, turnIdx);
-        this._hhSections.action.turn = lines.slice(turnIdx + 1, showdownIdx);
-    } else if (lastStreet === 'river') {
-        this._hhSections.action.preflop = lines.slice(preflopIdx + 2, flopIdx);
-        this._hhSections.action.flop = lines.slice(flopIdx + 1, turnIdx);
-        this._hhSections.action.turn = lines.slice(turnIdx + 1, riverIdx);
-      if (showdownIdx) {
-        this._hhSections.action.river = lines.slice(riverIdx + 1, showdownIdx);
-      } else {
-        this._hhSections.action.river = lines.slice(riverIdx + 1, summaryIdx);
+      this._hhSections.action = {
+        preflop: lines.slice(preflopIdx + 2, flopIdx),
+        flop: lines.slice(flopIdx + 1, showdownIdx)
       }
+    } else if (lastStreet === 'turn') {
+      this._hhSections.action = {
+        preflop : lines.slice(preflopIdx + 2, flopIdx),
+        flop : lines.slice(flopIdx + 1, turnIdx),
+        turn : lines.slice(turnIdx + 1, showdownIdx)
+      }
+    } else if (lastStreet === 'river') {
+      this._hhSections.action = {
+        preflop : lines.slice(preflopIdx + 2, flopIdx),
+        flop : lines.slice(flopIdx + 1, turnIdx),
+        turn : lines.slice(turnIdx + 1, riverIdx),
+        river: (showdownIdx ? lines.slice(riverIdx + 1, showdownIdx) : lines.slice(riverIdx + 1, summaryIdx))
+       }
     }
-
   }
 
   private findButtonSeat():string {
