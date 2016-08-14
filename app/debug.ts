@@ -1,7 +1,7 @@
 import HandHistory from "./app";
 
 let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
-Table 'Aletheia' 6-max Seat #2 is the button
+Table 'Aletheia' 6-max Seat #4 is the button
 Seat 1: Phil ($149.08 in chips) 
 Seat 2: marquim1980 ($117.77 in chips) 
 Seat 3: Yoo4 ($100 in chips) 
