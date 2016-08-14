@@ -42,6 +42,22 @@ interface Action {
   river?: string[];
 }
 
+interface Play {
+  action: 'bet' | 'check' | 'fold' | 'raise' | 'all-in'
+}
+
+interface Street {
+  numOfPlayers: number;
+  action: Play[]
+}
+
+interface HandAction {
+  preflop: Street;
+  flop?: Street;
+  turn?: Street;
+  river?: Street ;
+}
+
 interface Options {
   setPot?: boolean;
   setBoard?: boolean;
@@ -55,7 +71,7 @@ interface Options {
 
 interface HHParams {
   hh: string,
-  options: Options
+  options?: Options
 }
 
 class Player {
@@ -111,6 +127,7 @@ export default class HandHistory {
   private _potSize: number;
   private _board: Board = {};
   private _lastStreetPlayed: 'preflop' | 'flop' | 'turn' | 'river';
+  private _handAction;
 
   // table composition
   private _players: Player[];
@@ -122,7 +139,15 @@ export default class HandHistory {
     this.parseHH(params.options);
   }
 
-  private parseHH(options:Options) {
+  private parseHH(options:Options = {
+    setHeroName: true,
+    setPlayers: true,
+    setPot: true,
+    setBoard: true,
+    setStakes: true,
+    setTime: true,
+    setHeroCards: true,
+    setHeroPosition: true}) {
     if (options.setHeroName) this.setHeroName();
     if (options.setPlayers) this.setPlayers();
     if (options.setPot) this.setPot();
@@ -132,6 +157,9 @@ export default class HandHistory {
     if (options.setHeroCards) this.setHeroCards();
     if (options.setHeroPosition) this.setHeroPosition();
   }
+
+
+
 
   get board() { return  this._board}
   get hero() { return  this._hero}
@@ -166,7 +194,7 @@ export default class HandHistory {
     this._hhSections = {
       meta: lines.slice(0, 2),
       seats: lines.slice(2, preflopIdx),
-      hero: lines[preflopIdx + 1, preflopIdx + 2],
+      hero: lines[preflopIdx, preflopIdx + 1],
       action: { preflop: [] },
       summary: lines.slice(summaryIdx)
     };
@@ -266,7 +294,7 @@ export default class HandHistory {
 
   private setStakes() {
     this._stakes = { sb: 0, bb: 0 }
-    let result = this.runRegex(this._rgx.stakes, this._hhSections.summary.join('\n'));
+    let result = this.runRegex(this._rgx.stakes, this._hhSections.meta.join('\n'));
 
     let step1 = result[0].split(' ');
     let step2 = step1[0].split('/');
