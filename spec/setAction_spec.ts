@@ -43,6 +43,10 @@ Board [7h 8h 3c Qh 3h]`;
         it('should set action', () => {
             expect(hh.handAction.flop.action).toEqual(['folds', 'folds', 'raises', 'calls', 'folds', 'calls']);
         });
+
+        it('should set pot size', () => {
+            expect(hh.handAction.flop.potSize).toEqual(10);
+        });
     });
 
     describe('when setting flop action', () => {
@@ -52,6 +56,10 @@ Board [7h 8h 3c Qh 3h]`;
 
         it('should set action', () => {
             expect(hh.handAction.flop.action).toEqual(['checks','bets','folds', 'calls']);
+        });
+
+        it('should set pot size', () => {
+            expect(hh.handAction.flop.potSize).toEqual(20.16);
         });
     });
 
@@ -63,6 +71,10 @@ Board [7h 8h 3c Qh 3h]`;
         it('should set action', () => {
             expect(hh.handAction.flop.action).toEqual(['checks','checks']);
         });
+
+        it('should set pot size', () => {
+            expect(hh.handAction.flop.potSize).toEqual(20.16);
+        });
     });
     describe('when setting river action', () => {
         it('should set number of players', () => {
@@ -71,6 +83,10 @@ Board [7h 8h 3c Qh 3h]`;
 
         it('should set action', () => {
             expect(hh.handAction.flop.action).toEqual(['bets', 'raises', 'folds']);
+        });
+
+        it('should set pot size', () => {
+            expect(hh.handAction.flop.potSize).toEqual(11111111111);
         });
     });
   });

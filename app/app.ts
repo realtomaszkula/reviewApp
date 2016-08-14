@@ -1,5 +1,5 @@
 interface Card {
-  suit: string;
+  suit: string,
   value: number
 }
 
@@ -36,10 +36,10 @@ interface Meta {
 }
 
 interface Action {
-  preflop: string[];
-  flop?: string[];
-  turn?: string[];
-  river?: string[];
+  preflop: string[],
+  flop?: string[],
+  turn?: string[],
+  river?: string[],
 }
 
 interface Play {
@@ -47,26 +47,27 @@ interface Play {
 }
 
 interface Street {
-  numOfPlayers: number;
-  action: Play[]
+  numOfPlayers: number,
+  action: Play[],
+  potSize: number
 }
 
 interface HandAction {
-  preflop: Street;
-  flop?: Street;
-  turn?: Street;
-  river?: Street ;
+  preflop: Street,
+  flop?: Street,
+  turn?: Street,
+  river?: Street ,
 }
 
 interface Options {
-  setPot?: boolean;
-  setBoard?: boolean;
-  setStakes?: boolean;
-  setTime?: boolean;
-  setHeroName?: boolean;
-  setHeroCards?: boolean;
-  setHeroPosition?: boolean;
-  setPlayers?: boolean;
+  setPot?: boolean,
+  setBoard?: boolean,
+  setStakes?: boolean,
+  setTime?: boolean,
+  setHeroName?: boolean,
+  setHeroCards?: boolean,
+  setHeroPosition?: boolean,
+  setPlayers?: boolean,
 }
 
 interface HHParams {
