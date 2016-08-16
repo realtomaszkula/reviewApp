@@ -69,6 +69,7 @@ interface Options {
   setHeroCards?: boolean,
   setHeroPosition?: boolean,
   setPlayers?: boolean,
+  setHandAction?:boolean
 }
 
 interface HHParams {
@@ -112,6 +113,7 @@ export default class HandHistory {
       buttonSeat:  /Seat #(\d) is the button/,
       playerNicks:  /(^.+?)(?=\(\$\d+)/,
       playerCards: /\(\$([\d|\.]+) in chips\)$/gm,
+      betSize: /\$(\d+(?:\.\d+)?)$/gm,
       pot: /Total pot \$((\d+)(\.\d+)?)/,
       stakes: /\(([^\/]+)\/([^\)]+)\)/,
       time:  /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/,
@@ -152,7 +154,8 @@ export default class HandHistory {
     setStakes: true,
     setTime: true,
     setHeroCards: true,
-    setHeroPosition: true}) {
+    setHeroPosition: true,
+    setHandAction: true}) {
     if (options.setHeroName) this.setHeroName();
     if (options.setPlayers) this.setPlayers();
     if (options.setPot) this.setPot();
@@ -171,6 +174,7 @@ export default class HandHistory {
   get lastStreetPlayed() { return  this._lastStreetPlayed }
   get potSize() { return  this._potSize }
   get players() { return  this._players }
+  get handAction() { return  this._handAction }
 
   private sliceHH() {
     let lines:string[] = this._hh.split('\n');
@@ -203,31 +207,30 @@ export default class HandHistory {
 
     let action:Action;
 
-    let lastStreet;
     if(!flopIdx) {
-      lastStreet = 'preflop'
+      this._lastStreetPlayed = 'preflop'
     } else if(!turnIdx) {
-      lastStreet = 'flop'
+      this._lastStreetPlayed = 'flop'
     } else if(!riverIdx) {
-      lastStreet = 'turn'
+      this._lastStreetPlayed = 'turn'
     } else {
-      lastStreet = 'river'
+      this._lastStreetPlayed = 'river'
     }
 
-    if (lastStreet === 'preflop') {
+    if (this._lastStreetPlayed === 'preflop') {
       this._hhSections.action.preflop = lines.slice(preflopIdx + 2, showdownIdx);
-    } else if (lastStreet === 'flop') {
+    } else if (this._lastStreetPlayed === 'flop') {
       this._hhSections.action = {
         preflop: lines.slice(preflopIdx + 2, flopIdx),
         flop: lines.slice(flopIdx + 1, showdownIdx)
       }
-    } else if (lastStreet === 'turn') {
+    } else if (this._lastStreetPlayed === 'turn') {
       this._hhSections.action = {
         preflop : lines.slice(preflopIdx + 2, flopIdx),
         flop : lines.slice(flopIdx + 1, turnIdx),
         turn : lines.slice(turnIdx + 1, showdownIdx)
       }
-    } else if (lastStreet === 'river') {
+    } else if (this._lastStreetPlayed === 'river') {
       this._hhSections.action = {
         preflop : lines.slice(preflopIdx + 2, flopIdx),
         flop : lines.slice(flopIdx + 1, turnIdx),
@@ -235,6 +238,62 @@ export default class HandHistory {
         river: (showdownIdx ? lines.slice(riverIdx + 1, showdownIdx) : lines.slice(riverIdx + 1, summaryIdx))
        }
     }
+  }
+
+
+  private firstMatchingGroup(rgx, str): string[] {
+    let results = [], result;
+    while(result = rgx.exec(str)) {
+      results.push(str[1])
+    }
+    return results;
+  }
+
+  private setPotSize(action:HandAction) {
+    let preflopBets:number[], flopBets:number[], turnBets:number[], riverBets:number[];
+
+    preflopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.preflop.join('\n'))
+                        .map( b => parseFloat(b))
+
+    action.preflop.potSize = preflopBets.reduce((prevV, curV) => prevV + curV, 0)
+    
+    if(this._lastStreetPlayed === 'flop') {
+        flopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.flop.join('\n'))
+                      .map( b => parseFloat(b))
+        action.flop.potSize = flopBets.reduce((prevV, curV) => prevV + curV, 0)
+
+    }
+
+    if(this._lastStreetPlayed === 'turn') {
+        turnBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.turn.join('\n'))
+                      .map( b => parseFloat(b))
+        action.turn.potSize = turnBets.reduce((prevV, curV) => prevV + curV, 0)
+
+    }
+
+    if(this._lastStreetPlayed === 'river') {
+        riverBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.river.join('\n'))
+                      .map( b => parseFloat(b))
+        action.river.potSize = riverBets.reduce((prevV, curV) => prevV + curV, 0)
+    }
+  }
+
+  private setNumOfPlayers(action:HandAction) {
+
+  }
+
+  private setAction(action:HandAction) {
+
+  }
+
+  private setHandAction():void {
+    let action:HandAction = { preflop: { potSize: 0, numOfPlayers: 0, action: []} }
+
+    this.setPotSize(action)
+    this.setNumOfPlayers(action)
+    this.setPotSize(action)
+
+    this._handAction = action;
   }
 
   private findButtonSeat():string {
@@ -405,19 +464,9 @@ export default class HandHistory {
     }
   }
 
-  private runRegex(regExString, stringToMatchAgainst = this._hh, flag = '') {
-    const regExp = new RegExp(regExString, flag)
-
-    if (flag) {
-      let result = [], match;
-
-      while (match = regExp.exec(stringToMatchAgainst)) {
-        result.push(match)
-      }
-      return result
-    } else {
-      return stringToMatchAgainst.match(regExp)
-    }
+  private runRegex(regExString, stringToMatchAgainst = this._hh) {
+    const regExp = new RegExp(regExString)
+    return stringToMatchAgainst.match(regExp)
   }
 }
 

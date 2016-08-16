@@ -1,8 +1,8 @@
 /// <reference path="/home/tomasz/Sites/finerReview/app/app.ts" />
 import HandHistory from "../app/app";
 
-xdescribe('Hand History', () => {
-  describe('setAction', () => {
+describe('Hand History', () => {
+  describe('setHandAction', () => {
       let hh;
       beforeEach(() => {
         let hhraw = `PushMeSlowly: posts small blind $0.50
@@ -39,7 +39,7 @@ KABAN020276 collected $23.28 from pot
 Total pot $24.50 | Rake $1.22 
 Board [4h Jc Kc 9s 7s]`;
 
-      hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
+      hh = new HandHistory({ hh: hhraw, options: { setBoard: true, setHandAction: true } } );
       })
 
     describe('when setting preflop action', () => {
