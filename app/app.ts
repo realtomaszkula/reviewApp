@@ -339,9 +339,8 @@ export default class HandHistory {
     else {
         this._lastStreetPlayed = 'preflop';
     }
-
   }
-
+  
   private setHeroPosition() {
      this._hero.position = this._players.find( p =>  p.name === this._hero.name ).position
   }

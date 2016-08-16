@@ -5,88 +5,95 @@ describe('Hand History', () => {
   describe('setAction', () => {
       let hh;
       beforeEach(() => {
-        let hhraw = `*** HOLE CARDS ***
-Dealt to reppinR1 [8c 7c Jh Ks]
+        let hhraw = `PushMeSlowly: posts small blind $0.50
+falco_lucky7: posts big blind $1
+*** HOLE CARDS ***
+Dealt to reppinR1 [2c 3d 4d 3c]
+reppinR1 has timed out
 reppinR1: folds 
-Chigurovich: folds 
-slainew: raises $2 to $3
-BeTePaH_733: calls $3
-9I_Be3yH4uk: folds 
-Pedreau: calls $2
-*** FLOP *** [7h 8h 3c]
-Pedreau: checks 
-slainew: bets $5.08
-BeTePaH_733: folds 
-Pedreau: calls $5.08
-*** TURN *** [7h 8h 3c] [Qh]
-Pedreau: checks 
-slainew: checks 
-*** RIVER *** [7h 8h 3c Qh] [3h]
-Pedreau: bets $13.26
-slainew: raises $13.26 to $26.52
-Pedreau: folds 
-Uncalled bet ($13.26) returned to slainew
-slainew collected $45.01 from pot
-slainew: doesn't show hand 
+KABAN020276: calls $1
+Magnestad: raises $2 to $3
+afmaynard: calls $3
+PushMeSlowly: folds 
+falco_lucky7: calls $2
+KABAN020276: calls $2
+*** FLOP *** [4h Jc Kc]
+falco_lucky7: checks 
+KABAN020276: checks 
+Magnestad: checks 
+afmaynard: checks 
+*** TURN *** [4h Jc Kc] [9s]
+falco_lucky7: checks 
+KABAN020276: bets $6
+Magnestad: folds 
+afmaynard: calls $6
+falco_lucky7: folds 
+*** RIVER *** [4h Jc Kc 9s] [7s]
+KABAN020276: checks 
+afmaynard: checks 
+*** SHOW DOWN ***
+KABAN020276: shows [Kh Qh 5d 9h] (two pair, Kings and Nines)
+afmaynard: mucks hand 
+KABAN020276 collected $23.28 from pot
 *** SUMMARY ***
-Total pot $47.38 | Rake $2.37 
-Board [7h 8h 3c Qh 3h]`;
+Total pot $24.50 | Rake $1.22 
+Board [4h Jc Kc 9s 7s]`;
 
       hh = new HandHistory({ hh: hhraw, options: { setBoard: true } } );
       })
 
     describe('when setting preflop action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.flop.numOfPlayers).toEqual(3);
+            expect(hh.handAction.preflop.numOfPlayers).toEqual(4);
         });
 
         it('should set action', () => {
-            expect(hh.handAction.flop.action).toEqual(['folds', 'folds', 'raises', 'calls', 'folds', 'calls']);
+            expect(hh.handAction.preflop.action).toEqual(['call', 'raise', 'call', 'call', 'call']);
         });
 
         it('should set pot size', () => {
-            expect(hh.handAction.flop.potSize).toEqual(10);
+            expect(hh.handAction.preflop.potSize).toEqual(12.5);
         });
     });
 
     describe('when setting flop action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.flop.numOfPlayers).toEqual(3);
+            expect(hh.handAction.flop.numOfPlayers).toEqual(4);
         });
 
         it('should set action', () => {
-            expect(hh.handAction.flop.action).toEqual(['checks','bets','folds', 'calls']);
+            expect(hh.handAction.flop.action).toEqual(['check','check','check', 'check']);
         });
 
         it('should set pot size', () => {
-            expect(hh.handAction.flop.potSize).toEqual(20.16);
+            expect(hh.handAction.flop.potSize).toEqual(12.5);
         });
     });
 
     describe('when setting turn action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.flop.numOfPlayers).toEqual(2);
+            expect(hh.handAction.turn.numOfPlayers).toEqual(2);
         });
 
         it('should set action', () => {
-            expect(hh.handAction.flop.action).toEqual(['checks','checks']);
+            expect(hh.handAction.turn.action).toEqual(['checks','bet','fold', 'call', 'fold']);
         });
 
         it('should set pot size', () => {
-            expect(hh.handAction.flop.potSize).toEqual(20.16);
+            expect(hh.handAction.turn.potSize).toEqual(24.5);
         });
     });
     describe('when setting river action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.flop.numOfPlayers).toEqual(2);
+            expect(hh.handAction.river.numOfPlayers).toEqual(2);
         });
 
         it('should set action', () => {
-            expect(hh.handAction.flop.action).toEqual(['bets', 'raises', 'folds']);
+            expect(hh.handAction.river.action).toEqual(['check','check']);
         });
 
         it('should set pot size', () => {
-            expect(hh.handAction.flop.potSize).toEqual(11111111111);
+            expect(hh.handAction.river.potSize).toEqual(24.5);
         });
     });
   });
