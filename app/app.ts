@@ -114,6 +114,8 @@ export default class HandHistory {
       playerNicks:  /(^.+?)(?=\(\$\d+)/,
       playerCards: /\(\$([\d|\.]+) in chips\)$/gm,
       betSize: /\$(\d+(?:\.\d+)?)$/gm,
+      preflopNick: /(^.+)(?:\: calls |\: raises |\: checks)/gm,     // not including folds
+      postflopNick: /(^.+)(?:\: folds|\: calls |\: raises |\: checks)/gm,
       pot: /Total pot \$((\d+)(\.\d+)?)/,
       stakes: /\(([^\/]+)\/([^\)]+)\)/,
       time:  /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/,
@@ -256,6 +258,10 @@ export default class HandHistory {
     preflopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.preflop.join('\n'))
                         .map( b => parseFloat(b))
 
+
+    // calculateDeadMoney()
+    // calculateAntes()
+
     let blinds = this._stakes.sb + this._stakes.bb
     if (flopBets != []) 
       action.preflop.potSize = preflopBets.reduce((prevV, curV) => prevV + curV, blinds);
@@ -290,6 +296,28 @@ export default class HandHistory {
 
   private setNumOfPlayers(action:HandAction) {
 
+    let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.preflopNick, this._hhSections.action.preflop.join('\n'))
+                                    .sort().filter( (v, i, a) => v !== a[i-1]) // making sure nicks are uniq
+    action.preflop.numOfPlayers = involvedPlayerNicks.length
+
+    if(this._lastStreetPlayed !== 'preflop') {
+      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.flop.join('\n'))
+                                      .sort().filter( (v, i, a) => v !== a[i-1])
+      action.flop.numOfPlayers = involvedPlayerNicks.length
+    }
+
+    if(this._lastStreetPlayed !== 'flop') {
+      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.turn.join('\n'))
+                                      .sort().filter( (v, i, a) => v !== a[i-1])
+      action.turn.numOfPlayers = involvedPlayerNicks.length
+    }
+
+    if(this._lastStreetPlayed !== 'turn') {
+      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.river.join('\n'))
+                                      .sort().filter( (v, i, a) => v !== a[i-1])
+
+      action.river.numOfPlayers = involvedPlayerNicks.length
+    }
   }
 
   private setAction(action:HandAction) {

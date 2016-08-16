@@ -38,6 +38,9 @@ afmaynard: calls $6
 falco_lucky7: folds 
 *** RIVER *** [4h Jc Kc 9s] [7s]
 KABAN020276: checks 
+afmaynard: checks
+afmaynard: checks 
+afmaynard: checks 
 afmaynard: checks 
 *** SHOW DOWN ***
 KABAN020276: shows [Kh Qh 5d 9h] (two pair, Kings and Nines)
@@ -46,6 +49,8 @@ KABAN020276 collected $23.28 from pot
 *** SUMMARY ***
 Total pot $24.50 | Rake $1.22 
 Board [4h Jc Kc 9s 7s]`;
+// added same fake checks to make sure the test falls if the same person takes multiple actions during the hand
+
 
 /* remember to set stakes during testing to make sure that conversion from $ to blinds works */
 
@@ -54,7 +59,7 @@ Board [4h Jc Kc 9s 7s]`;
 
     describe('when setting preflop action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.preflop.numOfPlayers).toEqual(4);
+            expect(hh.handAction.preflop.numOfPlayers).toEqual(5);
         });
 
         it('should set action', () => {
@@ -82,7 +87,7 @@ Board [4h Jc Kc 9s 7s]`;
 
     describe('when setting turn action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.turn.numOfPlayers).toEqual(2);
+            expect(hh.handAction.turn.numOfPlayers).toEqual(4);
         });
 
         it('should set action', () => {
