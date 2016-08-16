@@ -14,6 +14,7 @@ interface Position {
 
 interface PlayerParams {
   name: string,
+  stack: number,
   position:  Position
 }
 
@@ -77,9 +78,11 @@ interface HHParams {
 
 class Player {
   public name: string;
+  public stack: number;
   public position: Position ;
 
   constructor( params: PlayerParams ) {
+    this.stack = params.stack
     this.name = params.name
     this.position = params.position
   }
@@ -108,6 +111,7 @@ export default class HandHistory {
   private _rgx = {
       buttonSeat:  /Seat #(\d) is the button/,
       playerNicks:  /(^.+?)(?=\(\$\d+)/,
+      playerCards: /\(\$([\d|\.]+) in chips\)$/gm,
       pot: /Total pot \$((\d+)(\.\d+)?)/,
       stakes: /\(([^\/]+)\/([^\)]+)\)/,
       time:  /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/,
@@ -136,7 +140,7 @@ export default class HandHistory {
   constructor(params:HHParams) {
     this._hh = params.hh;
     this.sliceHH();
-    this._hero = new Hero( { name: '', position: { position: ''} , hand: []} )
+    this._hero = new Hero( { name: '', stack: 0 , position: { position: ''} , hand: []} )
     this.parseHH(params.options);
   }
 
@@ -158,9 +162,6 @@ export default class HandHistory {
     if (options.setHeroCards) this.setHeroCards();
     if (options.setHeroPosition) this.setHeroPosition();
   }
-
-
-
 
   get board() { return  this._board}
   get hero() { return  this._hero}
@@ -265,11 +266,19 @@ export default class HandHistory {
     // remove 'Seat x: '
     let stripSeat:string[] = rearangedSeats.map( s => s = s.slice(8) )
 
-    // keep only strings with player nicks (will end with '($\d\d)' which is stack size)
     let playerNames: string[] = [];
+    let playerStacks: number[] = [];
+
     stripSeat.forEach( s =>  {
-      let result = s.match(this._rgx.playerNicks);
-      if (result) playerNames.push(result[0])
+      // extract player nick from string
+      let nick = s.match(this._rgx.playerNicks);
+      if (nick) playerNames.push(nick[0])
+
+      // extract player stack from string
+      let stack;
+      while( stack = this._rgx.playerCards.exec(s.trim()) ) {
+        playerStacks.push(parseFloat(stack[1]))
+      }
     })
 
 
@@ -281,7 +290,8 @@ export default class HandHistory {
     playerNames.forEach( playerName => {
       this._players.push( 
           new Player({
-          name: playerName.trim(), 
+            name: playerName.trim(),
+            stack: playerStacks.shift(), 
             position: possiblePositions.shift() 
           })
       )

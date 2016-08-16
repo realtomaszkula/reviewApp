@@ -1,7 +1,7 @@
 /// <reference path="/home/tomasz/Sites/finerReview/app/app.ts" />
 import HandHistory from "../app/app";
 
-describe('Hand History', () => {
+xdescribe('Hand History', () => {
   describe('setAction', () => {
       let hh;
       beforeEach(() => {
