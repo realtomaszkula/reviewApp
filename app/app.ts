@@ -164,6 +164,7 @@ export default class HandHistory {
     if (options.setTime) this.setTime();
     if (options.setHeroCards) this.setHeroCards();
     if (options.setHeroPosition) this.setHeroPosition();
+    if (options.setHandAction) this.setHandAction();
   }
 
   get board() { return  this._board}
@@ -244,7 +245,7 @@ export default class HandHistory {
   private firstMatchingGroup(rgx, str): string[] {
     let results = [], result;
     while(result = rgx.exec(str)) {
-      results.push(str[1])
+      results.push(result[1])
     }
     return results;
   }
@@ -255,26 +256,35 @@ export default class HandHistory {
     preflopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.preflop.join('\n'))
                         .map( b => parseFloat(b))
 
-    action.preflop.potSize = preflopBets.reduce((prevV, curV) => prevV + curV, 0)
+    let blinds = this._stakes.sb + this._stakes.bb
+    if (flopBets != []) 
+      action.preflop.potSize = preflopBets.reduce((prevV, curV) => prevV + curV, blinds);
     
-    if(this._lastStreetPlayed === 'flop') {
+    if(this._lastStreetPlayed !== 'preflop') {
         flopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.flop.join('\n'))
                       .map( b => parseFloat(b))
-        action.flop.potSize = flopBets.reduce((prevV, curV) => prevV + curV, 0)
 
+        action.flop.potSize += action.preflop.potSize;    
+        if (flopBets != []) 
+          action.flop.potSize += flopBets.reduce((prevV, curV) => prevV + curV, 0)
     }
 
-    if(this._lastStreetPlayed === 'turn') {
+    if(this._lastStreetPlayed !== 'flop') {
         turnBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.turn.join('\n'))
                       .map( b => parseFloat(b))
-        action.turn.potSize = turnBets.reduce((prevV, curV) => prevV + curV, 0)
+        
+        action.turn.potSize += action.flop.potSize;    
+        if (turnBets != [])  
+          action.turn.potSize += turnBets.reduce((prevV, curV) => prevV + curV, 0)
 
     }
 
-    if(this._lastStreetPlayed === 'river') {
+    if(this._lastStreetPlayed !== 'turn') {
         riverBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.river.join('\n'))
                       .map( b => parseFloat(b))
-        action.river.potSize = riverBets.reduce((prevV, curV) => prevV + curV, 0)
+        action.river.potSize += action.turn.potSize;    
+        if (riverBets != []) 
+           action.river.potSize += riverBets.reduce((prevV, curV) => prevV + curV, 0) 
     }
   }
 
@@ -287,11 +297,16 @@ export default class HandHistory {
   }
 
   private setHandAction():void {
-    let action:HandAction = { preflop: { potSize: 0, numOfPlayers: 0, action: []} }
+    let action:HandAction = { 
+      preflop: { potSize: null, numOfPlayers: null, action: []}, 
+      flop: { potSize: null, numOfPlayers: null, action: []}, 
+      turn: { potSize: null, numOfPlayers: null, action: []}, 
+      river: { potSize: null, numOfPlayers: null, action: []} 
+    }
 
     this.setPotSize(action)
     this.setNumOfPlayers(action)
-    this.setPotSize(action)
+    this.setAction(action)
 
     this._handAction = action;
   }
