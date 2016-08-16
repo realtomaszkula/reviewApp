@@ -5,13 +5,14 @@ describe('Hand History', () => {
   describe('setHandAction', () => {
       let hh;
       beforeEach(() => {
-        let hhraw = `PokerStars Hand #156700709632:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:04 CET [2016/07/31 18:00:04 ET]
-Table 'Aletheia' 6-max Seat #6 is the button
-Seat 1: fatgreek64 ($89.27 in chips) 
-Seat 2: zocker jo433 ($138.95 in chips) 
-Seat 3: Yoo4 ($340.26 in chips) 
-Seat 5: falco_lucky7 ($106.62 in chips) 
-Seat 6: reppinR1 ($103.67 in chips) 
+        let hhraw = `PokerStars Hand #156700726476:  Omaha Pot Limit ($0.50/$1.00 USD) - 2016/08/01 0:00:32 CET [2016/07/31 18:00:32 ET]
+Table 'Castor III' 6-max Seat #2 is the button
+Seat 1: Magnestad ($355.23 in chips) 
+Seat 2: afmaynard ($298.34 in chips) 
+Seat 3: PushMeSlowly ($126.60 in chips) 
+Seat 4: falco_lucky7 ($226.31 in chips) 
+Seat 5: reppinR1 ($178.51 in chips) 
+Seat 6: KABAN020276 ($118.23 in chips)  
 PushMeSlowly: posts small blind $0.50
 falco_lucky7: posts big blind $1
 *** HOLE CARDS ***
