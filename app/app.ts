@@ -115,7 +115,7 @@ export default class HandHistory {
       playerCards: /\(\$([\d|\.]+) in chips\)$/gm,
       betSize: /\$(\d+(?:\.\d+)?)$/gm,
       preflopNick: /(^.+)(?:\: calls |\: raises |\: checks)/gm,     // not including folds
-      postflopNick: /(^.+)(?:\: folds|\: calls |\: raises |\: checks)/gm,
+      postflopNick: /(^.+)(?:\: bets|\: calls |\: raises |\: checks |\: folds)/gm,
       pot: /Total pot \$((\d+)(\.\d+)?)/,
       stakes: /\(([^\/]+)\/([^\)]+)\)/,
       time:  /\[(\d\d\d\d)[/](\d\d)[/](\d\d)\s(\d\d?):(\d\d):(\d\d)/,
@@ -294,29 +294,27 @@ export default class HandHistory {
     }
   }
 
-  private setNumOfPlayers(action:HandAction) {
-
-    let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.preflopNick, this._hhSections.action.preflop.join('\n'))
+  private extractNicks (action:HandAction, street = 'preflop') {
+    let regEx = (street == 'preflop') ? this._rgx.preflopNick : this._rgx.postflopNick
+    let involvedPlayerNicks = this.firstMatchingGroup(regEx , this._hhSections.action[street].join('\n'))
                                     .sort().filter( (v, i, a) => v !== a[i-1]) // making sure nicks are uniq
-    action.preflop.numOfPlayers = involvedPlayerNicks.length
+    action[street].numOfPlayers = involvedPlayerNicks.length
+  }
+
+
+  private setNumOfPlayers(action:HandAction) {
+      this.extractNicks(action)
 
     if(this._lastStreetPlayed !== 'preflop') {
-      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.flop.join('\n'))
-                                      .sort().filter( (v, i, a) => v !== a[i-1])
-      action.flop.numOfPlayers = involvedPlayerNicks.length
+        this.extractNicks(action, 'flop')
     }
 
     if(this._lastStreetPlayed !== 'flop') {
-      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.turn.join('\n'))
-                                      .sort().filter( (v, i, a) => v !== a[i-1])
-      action.turn.numOfPlayers = involvedPlayerNicks.length
+        this.extractNicks(action, 'turn')
     }
 
     if(this._lastStreetPlayed !== 'turn') {
-      let involvedPlayerNicks = this.firstMatchingGroup(this._rgx.postflopNick, this._hhSections.action.river.join('\n'))
-                                      .sort().filter( (v, i, a) => v !== a[i-1])
-
-      action.river.numOfPlayers = involvedPlayerNicks.length
+        this.extractNicks(action, 'river')
     }
   }
 

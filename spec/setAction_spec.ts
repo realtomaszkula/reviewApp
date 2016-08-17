@@ -59,7 +59,7 @@ Board [4h Jc Kc 9s 7s]`;
 
     describe('when setting preflop action', () => {
         it('should set number of players', () => {
-            expect(hh.handAction.preflop.numOfPlayers).toEqual(5);
+            expect(hh.handAction.preflop.numOfPlayers).toEqual(4);
         });
 
         it('should set action', () => {
