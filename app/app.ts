@@ -252,46 +252,27 @@ export default class HandHistory {
     return results;
   }
 
-  private setPotSize(action:HandAction) {
-    let preflopBets:number[], flopBets:number[], turnBets:number[], riverBets:number[];
 
-    preflopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.preflop.join('\n'))
+  private calculateBets(action:HandAction, prevStreetBetsValue: number, street = "preflop") {
+    let bets: number[];
+        bets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action[street].join('\n'))
                         .map( b => parseFloat(b))
+        if (bets != []) 
+          action[street].potSize = bets.reduce((prevV, curV) => prevV + curV, prevStreetBetsValue);
 
+  }
 
+  private setPotSize(action:HandAction) {
     // calculateDeadMoney()
     // calculateAntes()
 
+    // for preflop prevStreetBetsValue is blimds, antes and deadmoney
     let blinds = this._stakes.sb + this._stakes.bb
-    if (flopBets != []) 
-      action.preflop.potSize = preflopBets.reduce((prevV, curV) => prevV + curV, blinds);
-    
-    if(this._lastStreetPlayed !== 'preflop') {
-        flopBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.flop.join('\n'))
-                      .map( b => parseFloat(b))
+    this.calculateBets(action, blinds)
 
-        action.flop.potSize += action.preflop.potSize;    
-        if (flopBets != []) 
-          action.flop.potSize += flopBets.reduce((prevV, curV) => prevV + curV, 0)
-    }
-
-    if(this._lastStreetPlayed !== 'flop') {
-        turnBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.turn.join('\n'))
-                      .map( b => parseFloat(b))
-        
-        action.turn.potSize += action.flop.potSize;    
-        if (turnBets != [])  
-          action.turn.potSize += turnBets.reduce((prevV, curV) => prevV + curV, 0)
-
-    }
-
-    if(this._lastStreetPlayed !== 'turn') {
-        riverBets = this.firstMatchingGroup(this._rgx.betSize, this._hhSections.action.river.join('\n'))
-                      .map( b => parseFloat(b))
-        action.river.potSize += action.turn.potSize;    
-        if (riverBets != []) 
-           action.river.potSize += riverBets.reduce((prevV, curV) => prevV + curV, 0) 
-    }
+    if (this._lastStreetPlayed !== 'preflop') this.calculateBets(action, action.preflop.potSize, 'flop')
+    if (this._lastStreetPlayed !== 'flop')    this.calculateBets(action, action.flop.potSize, 'turn')
+    if (this._lastStreetPlayed !== 'turn')    this.calculateBets(action, action.turn.potSize, 'river')
   }
 
   private extractNicks (action:HandAction, street = 'preflop') {
